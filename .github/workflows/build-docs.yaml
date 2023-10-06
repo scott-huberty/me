@@ -26,3 +26,9 @@ jobs:
         run: |
           cd docs  # Change to the directory containing your Sphinx documentation
           make html  # Replace with your Sphinx build command
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAGES_TOKEN }}
+          publish_dir: docs/_build/html
