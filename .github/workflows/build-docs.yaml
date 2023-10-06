@@ -1,0 +1,28 @@
+name: Build Website
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x # Replace with the Python version you need
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  # Adjust the path as needed
+
+      - name: Build Documentation
+        run: |
+          cd docs  # Change to the directory containing your Sphinx documentation
+          make html  # Replace with your Sphinx build command
