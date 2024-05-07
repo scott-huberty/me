@@ -1,5 +1,1 @@
 shibuya
-black
-ruff
-codespell
-pydocstyle
