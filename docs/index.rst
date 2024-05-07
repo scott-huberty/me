@@ -11,7 +11,7 @@ Scott Huberty
 .. container:: buttons
 
     `CV <./_static/Scott-Huberty-Resume.pdf>`_
-    `About Me <./blog/index.html>`_
+    `About Me <./me.html>`_
 
 
 .. toctree::
@@ -19,4 +19,4 @@ Scott Huberty
    :caption: Contents:
    :hidden:
 
-   blog/index.rst
+   me.rst
