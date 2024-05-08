@@ -26,14 +26,14 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'shibuya'
 html_static_path = ['_static']
 
-html_logo = "_static/logo.png"
 html_theme_options = {
+    "light_logo": "_static/logo_light.png",
+    "dark_logo": "_static/logo_dark.png",
     "color_mode": "light",
-     "accent_color": "grass",
-     "github_url": "https://github.com/scott-huberty",
-     "linkedin_url": "https://github.com/scott-huberty",
+    "accent_color": "grass",
+    "github_url": "https://github.com/scott-huberty",
+    "linkedin_url": "https://github.com/scott-huberty",
 }
-
 
 html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
