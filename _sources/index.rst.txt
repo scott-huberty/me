@@ -1,12 +1,12 @@
 :layout: landing
 :description: My website, built with Shibuya, a customizable theme for Sphinx.
 
-Scott Huberty
-=============
+Scott Sibel
+===========
 
 .. rst-class:: lead
 
-    NeuroScientist • Open-Source Developer
+    ``for field in {life, data, computer}; do $field science; done``
    
 .. container:: buttons
 

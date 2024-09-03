@@ -1,0 +1,31 @@
+html.light {
+  --sy-c-background: #eefef9ef;
+  --sy-c-foot-background: var(--sy-c-background);
+  --sy-c-divider: var(--sy-c-background);
+  --sy-c-foot-divider: var(--sy-c-background);
+  --sy-c-text: #2D5736;
+  --sy-c-light: var(--sy-c-text);
+  --sy-c-heading: var(--sy-c-text);
+  .light-logo {
+    display: block;
+    margin: 0 auto;
+    width: 50;
+    height: 50px;
+  }
+}
+
+html.dark {
+  --sy-c-background: #2D5736;
+  --sy-c-foot-background: var(--sy-c-background);
+  --sy-c-divider: var(--sy-c-background);
+  --sy-c-foot-divider: var(--sy-c-background);
+  --sy-c-text: #d6fcf1ef;
+  --sy-c-light: var(--sy-c-text);
+  --sy-c-heading: #BDEE63;
+  .dark-logo {
+    display: block;
+    margin: 0 auto;
+    width: 50;
+    height: 50px;
+  }
+}

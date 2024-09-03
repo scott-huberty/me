@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en" data-accent-color="grass" data-content_root="./">
+<html lang="en" data-accent-color="violet" data-content_root="./">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Scott Huberty documentation</title>
-    <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bio" href="me.html" />
-
-  <script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Scott Huberty documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Bio" href="me.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
-    setColorMode(sessionStorage._theme||"light");
-  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=aecf457f" />
-    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=f2d5353f" />
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=36d120a7" />
     <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=0e89889e" />
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ojuju:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
+    /* use light (400) and bold (800) weights */
 :root {
-  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
-  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+    --sy-f-heading: 'Ojuju', var(--sy-f-sys), sans-serif;
+    --sy-f-text: 'Open Sans', var(--sy-f-sys), sans-serif;
+    --sy-f-text-light: 400;
 }
 </style>
     
@@ -33,48 +33,40 @@
     margin-bottom: 1rem;
   }
 
+  .injected,
   .yue a.headerlink {
     display: none;
   }
 </style>
 
-  <meta property="og:type" content="website"/><meta property="og:title" content="Scott Huberty"/>
+  <meta property="og:type" content="website"/><meta property="og:title" content="Scott Sibel"/>
 <meta name="twitter:card" content="summary"/>
 <meta name="description" content="My website, built with Shibuya, a customizable theme for Sphinx."/>
 <meta property="og:description" content="My website, built with Shibuya, a customizable theme for Sphinx."/></head>
-<body><div class="document"><div class="sy-head">
+<body><div class="sy-head">
   <div class="sy-head-blur"></div>
   <div class="sy-head-inner sy-container mx-auto">
-    <a class="sy-head-brand mr-4" href="#">
-      <img class="light-logo" src="_static/logo_light.png" alt="Scott Huberty" height="28" />
-      <img class="dark-logo" src="_static/logo_dark.png" alt="Scott Huberty" height="28" />
+    <a class="sy-head-brand" href="#">
+      <img class="light-logo" src="_static/logo.svg" alt="Scott Huberty" height="28" loading="lazy" />
+      <img class="dark-logo" src="_static/logo.svg" alt="Scott Huberty" height="28" loading="lazy" />
       <strong>Scott Huberty</strong>
     </a>
-    <div class="sy-head-links" id="NavLinks">
-      <nav class="sy-head-nav"></nav>
-      <div class="sy-head-extra flex items-center print:hidden">
-        
-<form class="searchbox flex items-center" action="search.html" method="get">
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
   <input type="text" name="q" placeholder="Search" />
   <kbd>/</kbd>
-</form>
-        
-        
-        <div class="sy-head-socials flex items-center">
-    <a href="https://github.com/scott-huberty" aria-label="GitHub">
-      <i class="i-simpleicons github"></i>
-    </a>
-</div>
-      </div>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/scott-huberty" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
     </div>
-    <div class="sy-head-actions flex items-center shrink-0 print:hidden">
-      <button class="js-theme theme-switch flex items-center"
-        data-aria-auto="Switch to light color mode"
-        data-aria-light="Switch to dark color mode"
-        data-aria-dark="Switch to auto color mode">
-        <i class="i-lucide theme-icon"></i>
-      </button>
-      <button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="NavLinks" aria-expanded="false">
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
         <div class="hamburger">
           <span class="hamburger_1"></span>
           <span class="hamburger_2 -translate-x-2"></span>
@@ -86,9 +78,9 @@
 </div><div class="sy-container mx-auto body">
     <main class="sy-content mx-auto pt-12 px-6 xl:px-12 break-words">
       <article class="yue" role="main">
-        <section id="scott-huberty">
-<h1>Scott Huberty<a class="headerlink" href="#scott-huberty" title="Link to this heading">¶</a></h1>
-<p class="lead">NeuroScientist • Open-Source Developer</p>
+        <section id="scott-sibel">
+<h1>Scott Sibel<a class="headerlink" href="#scott-sibel" title="Link to this heading">¶</a></h1>
+<p class="lead"><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">field</span> <span class="pre">in</span> <span class="pre">{life,</span> <span class="pre">data,</span> <span class="pre">computer};</span> <span class="pre">do</span> <span class="pre">$field</span> <span class="pre">science;</span> <span class="pre">done</span></code></p>
 <div class="buttons docutils container">
 <p><a class="reference external" href="./_static/Scott-Huberty-Resume.pdf">CV</a>
 <a class="reference external" href="./me.html">About Me</a></p>
@@ -104,7 +96,6 @@
     </main>
   </div><footer class="sy-foot">
   <div class="sy-foot-inner sy-container mx-auto">
-    
     <div class="sy-foot-reserved md:flex justify-between items-center">
       <div class="sy-foot-copyright"><p>2024, Scott Huberty</p>
   
@@ -117,15 +108,17 @@
   </p>
 </div>
       <div class="sy-foot-socials">
-  <a href="https://github.com/scott-huberty" aria-label="GitHub"><i class="i-simpleicons github"></i></a>
-</div>
+<a href="https://github.com/scott-huberty" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a>
+<a href="https://github.com/scott-huberty" aria-label="LinkedIn">
+  <iconify-icon icon="simple-icons:linkedin"></iconify-icon>
+</a></div>
     </div>
   </div>
-</footer></div>
+</footer>
       <script src="_static/documentation_options.js?v=5929fcd5"></script>
       <script src="_static/doctools.js?v=9a2dae69"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/shibuya.js?v=5f0e4c24"></script>
-    
-</body>
+      <script src="_static/shibuya.js?v=c5fc9e80"></script></body>
 </html>
