@@ -25,13 +25,20 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'shibuya'
 html_static_path = ['_static']
-html_logo = "_static/logo.svg"
 
 html_theme_options = {
-    # "color_mode": "light",
-    # "accent_color": "brown",
+    "light_logo": "_static/logo.svg",
+    "dark_logo": "_static/logo_dark.png",
+    "color_mode": "light",
+    "accent_color": "tomato",
     "github_url": "https://github.com/scott-huberty",
     "linkedin_url": "https://github.com/scott-huberty",
+    "nav_links": [
+        {
+            "title": "Portfolio",
+            "url": "./portfolio"
+        },
+    ]
 }
 
 html_css_files = [
