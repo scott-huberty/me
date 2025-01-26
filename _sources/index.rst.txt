@@ -1,8 +1,8 @@
 :layout: landing
 :description: My website, built with Shibuya, a customizable theme for Sphinx.
 
-Scott Sibel
-===========
+Scott Huberty
+=============
 
 .. rst-class:: lead
 
@@ -20,3 +20,4 @@ Scott Sibel
    :hidden:
 
    me.rst
+   portfolio.rst

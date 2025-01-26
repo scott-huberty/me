@@ -1,11 +1,11 @@
 html.light {
-  --sy-c-background: #eefef9ef;
+  --sy-c-background: #f3f1eaff;
   --sy-c-foot-background: var(--sy-c-background);
   --sy-c-divider: var(--sy-c-background);
   --sy-c-foot-divider: var(--sy-c-background);
-  --sy-c-text: #2D5736;
+  --sy-c-text: #3d3929;
   --sy-c-light: var(--sy-c-text);
-  --sy-c-heading: var(--sy-c-text);
+  --sy-c-heading: #535146;
   .light-logo {
     display: block;
     margin: 0 auto;
@@ -15,17 +15,21 @@ html.light {
 }
 
 html.dark {
-  --sy-c-background: #2D5736;
+  --sy-c-background: #2d2c2c;
   --sy-c-foot-background: var(--sy-c-background);
   --sy-c-divider: var(--sy-c-background);
   --sy-c-foot-divider: var(--sy-c-background);
-  --sy-c-text: #d6fcf1ef;
+  --sy-c-text: #e5e5e2;
   --sy-c-light: var(--sy-c-text);
-  --sy-c-heading: #BDEE63;
+  --sy-c-heading: #ffffff;
   .dark-logo {
     display: block;
     margin: 0 auto;
     width: 50;
     height: 50px;
   }
+}
+
+html[data-accent-color='tomato'] {
+  --accent-9: #da7757;
 }
