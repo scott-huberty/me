@@ -1,7 +1,9 @@
 Bio
 ===
 
-I am  a Post Doctoral Researcher at the University of Southern California.
+I am  a Post Doctoral Researcher at the University of Southern California. My research
+focuses on Machine Learning, Signal and Image Processing, Brain Imaging (EEG, MEG, fMRI)
+Scientific Computing, Optimization, and Software Engineering.
 
 I received my  doctoral training in the life sciences, and I  am an avid contributor to
 all things Scientific Python. I am usually working on open source projects, and love to
