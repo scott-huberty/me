@@ -20,4 +20,4 @@ Scott Huberty
    :hidden:
 
    me.rst
-   portfolio.rst
+   auto_examples/index.rst

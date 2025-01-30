@@ -1,0 +1,7 @@
+ICA for musical source separation
+=================================
+
+Below is a gallery of examples that simulate the separation of musical sources from a recording
+of "a band playing music", except we simulate the sources by mixing stems from the
+10,000 gecs stems pack. The goal is to show how ICA can be used to separate musical sources
+from a recording.

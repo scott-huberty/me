@@ -1,1 +1,7 @@
 shibuya
+sphinx-gallery
+scikit-learn
+matplotlib
+ipython
+pooch
+tqdm

@@ -13,7 +13,9 @@ author = 'Scott Huberty'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+    'sphinx_gallery.gen_gallery',
+    ]
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
@@ -35,9 +37,13 @@ html_theme_options = {
     "linkedin_url": "https://github.com/scott-huberty",
     "nav_links": [
         {
-            "title": "Portfolio",
-            "url": "./portfolio"
+            "title": "Blog",
+            "url": "./auto_examples/index",
         },
+        {
+            "title": "Portfolio",
+            "url": "./portfolio",
+        }
     ]
 }
 
@@ -45,3 +51,11 @@ html_css_files = [
     "custom.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
 ]
+
+# -- Options for sphinx_gallery ----------------------------------------------
+# https://sphinx-gallery.github.io/stable/configuration.html
+
+sphinx_gallery_conf = {
+     'examples_dirs': '../examples',   # path to your example scripts
+     'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
+}
