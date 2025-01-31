@@ -28,6 +28,13 @@ html.dark {
     width: 50;
     height: 50px;
   }
+  .admonition.note {
+    /* --color-1: color(display-p3 0.992 0.376 0.224/0.051); */
+    --color-1: rgb(37, 60, 80);
+    --color-2: rgb(87, 177, 255, .3); /* top bar */
+    --color-3: rgb(87, 177, 255); /* left accent */
+    --color-4: rgb(75, 171, 255); /* title text */
+  }
 }
 
 html[data-accent-color='tomato'] {

@@ -8,7 +8,7 @@ Use ICA to separate the instruments in a 100 Gecs song.
 ICA is a wonderful algorithm. It can be used tease apart different "sources" in a
 signal.
 
-But there's a catch. You need to have multiple "observations" of the this signal.
+But there's a catch. You need to have multiple "observations" of this signal.
 The canonical example would be an orchestra performance recorded with multiple
 microphones (a few in each section). Each microphone is one "observation". Since
 each microphone picks up a blend of all the instruments, you can use ICA to separate
@@ -106,11 +106,16 @@ stems_dir = Path(stem_fpaths[0]).parent
 
 # %%
 sfreq, drums = process_audio(stems_dir / "Drums.wav")
-bass = process_audio(stems_dir / "Bass.wav")[1]
-fx = process_audio(stems_dir / "FX.wav")[1]
-vocals = process_audio(stems_dir / "Vocals.wav")[1]
+# For memory purposes, let's cut the recording in half
+n_samples = drums.shape[0]
+crop = n_samples // 2
 
-mix_matrix = np.array([0.70, 0.10, 0.10, 0.10])
+drums = drums[:crop]
+bass = process_audio(stems_dir / "Bass.wav")[1][:crop]
+fx = process_audio(stems_dir / "FX.wav")[1][:crop]
+vocals = process_audio(stems_dir / "Vocals.wav")[1][:crop]
+
+mix_matrix = np.array([0.50, 0.20, 0.15, 0.15])
 mix_func = partial(mix_stems, mix_matrix=mix_matrix)
 
 drums = mix_func(drums, bass, fx, vocals)
