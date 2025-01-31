@@ -1,57 +1,129 @@
 """
-Use ICA to separate a 100 gecs song into its components
+Use ICA to separate the instruments in a 100 Gecs song.
 =======================================================
 
-We'll use the "Most Wanted Person in the United States" stems from the 10,000 gecs
-stems pack to demonstrate how to use ICA to separate the components of a song.
+.. image:: https://i.kym-cdn.com/entries/icons/original/000/018/666/How_Do_You_Do_Fellow_Kids_meme_banner_image.jpg
+
+
+ICA is a wonderful algorithm. It can be used tease apart different "sources" in a
+signal.
+
+But there's a catch. You need to have multiple "observations" of the this signal.
+The canonical example would be an orchestra performance recorded with multiple
+microphones (a few in each section). Each microphone is one "observation". Since
+each microphone picks up a blend of all the instruments, you can use ICA to separate
+the individual instruments (so you'd have the violins isolated.. 0r the tuba.. etc.).
+
+And no, you probably can't use ICA to separate the vocals from a song you downloaded
+from the internet.
+
+Since a an orchestra performance might bore you (and because I don't have such
+a recording handy), let's use a different example. Pretend you are in the studio with
+100 gecs. You set up 4 microphones in the room, each recording the drums, bass, an 
+effects track (FX), and vocals. The individual microphones also pick
+up some of the other instruments, but that's okay. You can use ICA to separate the
+components!
 """
 
+from functools import partial
 from pathlib import Path
 
 import IPython.display as ipd
-
 import numpy as np
-
+import pooch
+from scipy.io import wavfile
 from sklearn.decomposition import FastICA
 
-from scipy.io import wavfile
+# %%
+# Define some helper functions
+# ----------------------------
+# (You can skip this section if you're not interested in the details)
+
+
+# %%
+def load_audio(wav_path):
+    """Load a wav file from disk."""
+    return wavfile.read(wav_path)
+
+
+def convert_to_mono(wav_array):
+    """Convert stereo audio to mono by averaging the channels."""
+    return np.mean(wav_array, axis=1)
+
+
+def normalize_audio(wav_array):
+    """Normalize the decibel range to -1 to 1."""
+    return wav_array / np.max(np.abs(wav_array))
+
+
+def process_audio(wav_path):
+    """Load a wav file, convert stereo to mono, and normalize decibel range."""
+    sfreq, wav_array = load_audio(wav_path)
+    if len(wav_array.shape) > 1:
+        wav_array = convert_to_mono(wav_array)
+    return sfreq, normalize_audio(wav_array)
+
+
+def mix_stems(*wavs, mix_matrix):
+    """Blend the individual stems together using a mixing matrix."""
+    return np.dot(mix_matrix, np.array(wavs, dtype=float))
+
 
 # %%
 # Load the mixed audio
 # ---------------------
+# We'll define a data fetcher to download the stems pack from the 10,000 gecs album.
+# Please note that this will download a 1.2 GB file to your machine. Please be patient!
 
 # %%
-SOURCES_DIR = (
-    Path(".").expanduser().resolve().parent /
-    "assets" /
-    "mixed_audio"
+print("Please be patient, this may take a while...")
+# We will ignore the guitars stem because it is mostly silent
+want_stems = ["Drums.wav", "Bass.wav", "Vocals.wav", "FX.wav"]
+members = [
+    f"10,000 gecs Stems/The Most Wanted Person in the United States/{stem}"
+    for stem in want_stems
+]
+
+unpack = pooch.Unzip(
+    extract_dir=".", # Relative to the path where the zip file is downloaded
+    members=members,
 )
-assert SOURCES_DIR.exists()
+
+stem_fpaths = pooch.retrieve(
+    url="https://www.100gecs.com/uploads/10000gecsstems.zip",
+    known_hash="sha256:65d2f8dc5cf61a6cd2ac722c2c3bef465b76ca50f5d0363425acdbc5b100e754",
+    progressbar=True,
+    path=Path.home() / "100gecs",
+    processor=unpack,
+)
+stems_dir = Path(stem_fpaths[0]).parent
 
 # %%
-sfreq, drums_mic = wavfile.read(SOURCES_DIR / "drums.wav")
-bass_mic = wavfile.read(SOURCES_DIR / "bass.wav")[1]
-guitars_mic = wavfile.read(SOURCES_DIR / "guitars.wav")[1]
-fx_mic = wavfile.read(SOURCES_DIR / "fx.wav")[1]
-vocals_mic = wavfile.read(SOURCES_DIR / "vocals.wav")[1]
-mix = drums_mic + bass_mic + guitars_mic + fx_mic + vocals_mic
-mix = mix / mix.max()
+# Load the stems
+# --------------
+# We'll load the stems and process them by converting stereo to mono and normalizing
+# the decibel range.
 
 # %%
-# Here is the mixed audio, and the bass, fx, and vocals isolated (for reference)
-# -------------------------------------------------------------------------------
+sfreq, drums = process_audio(stems_dir / "Drums.wav")
+bass = process_audio(stems_dir / "Bass.wav")[1]
+fx = process_audio(stems_dir / "FX.wav")[1]
+vocals = process_audio(stems_dir / "Vocals.wav")[1]
+
+mix_matrix = np.array([0.70, 0.10, 0.10, 0.10])
+mix_func = partial(mix_stems, mix_matrix=mix_matrix)
+
+drums = mix_func(drums, bass, fx, vocals)
+bass = mix_func(bass, fx, vocals, drums)
+fx = mix_func(fx, vocals, drums, bass)
+vocals = mix_func(vocals, drums, bass, fx)
 
 # %%
-ipd.Audio(mix, rate=sfreq)
+# Here is one (blended) stem for reference
+# ----------------------------------------
 
 # %%
-ipd.Audio(bass_mic, rate=sfreq)
-
-# %%
-ipd.Audio(vocals_mic, rate=sfreq)
-
-# %%
-ipd.Audio(fx_mic, rate=sfreq)
+ipd.Audio(fx, rate=sfreq)
 
 # %%
 # Separate the components with ICA
@@ -63,24 +135,24 @@ ipd.Audio(fx_mic, rate=sfreq)
 # recordings (drums, bass, guitars, fx, and vocals).
 
 # %%
-microphones = np.vstack([drums_mic, bass_mic, guitars_mic, fx_mic, vocals_mic]).T
-ica = FastICA()
+microphones = np.vstack([drums, bass, fx, vocals]).T
+ica = FastICA(random_state=42)
 components = ica.fit_transform(microphones)
 # Unpack the components
-ic_1, ic_2, ic_3, ic_4, ic_5 = components.T
+ic_1, ic_2, ic_3, ic_4 = components.T
 
 # %%
 # Here are the separated components
 # ---------------------------------
 
 # %%
-ipd.Audio(ic_1, rate=sfreq)
+ipd.Audio(normalize_audio(ic_1), rate=sfreq)
 
 # %%
-ipd.Audio(ic_2, rate=sfreq)
+ipd.Audio(normalize_audio(ic_2), rate=sfreq)
 
 # %%
-ipd.Audio(ic_3, rate=sfreq)
+ipd.Audio(normalize_audio(ic_3), rate=sfreq)
 
 # %%
 # Not too bad!

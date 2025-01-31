@@ -17,7 +17,7 @@ from a recording.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="We&#x27;ll use the &quot;Most Wanted Person in the United States&quot; stems from the 10,000 gecs stems pack to demonstrate how to use ICA to separate the components of a song.">
+    <div class="sphx-glr-thumbcontainer" tooltip=" ICA is a wonderful algorithm. It can be used tease apart different &quot;sources&quot; in a signal.">
 
 .. only:: html
 
@@ -28,7 +28,7 @@ from a recording.
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Use ICA to separate a 100 gecs song into its components</div>
+      <div class="sphx-glr-thumbnail-title">Use ICA to separate the instruments in a 100 Gecs song.</div>
     </div>
 
 
