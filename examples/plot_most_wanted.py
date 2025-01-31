@@ -110,9 +110,6 @@ bass = process_audio(stems_dir / "Bass.wav")[1]
 fx = process_audio(stems_dir / "FX.wav")[1]
 vocals = process_audio(stems_dir / "Vocals.wav")[1]
 
-mix = drums + bass + fx + vocals
-mix = normalize_audio(mix)
-
 mix_matrix = np.array([0.70, 0.10, 0.10, 0.10])
 mix_func = partial(mix_stems, mix_matrix=mix_matrix)
 
@@ -122,11 +119,8 @@ fx = mix_func(fx, vocals, drums, bass)
 vocals = mix_func(vocals, drums, bass, fx)
 
 # %%
-# Here is the mixed audio, and one (blended) stem for reference
-# -------------------------------------------------------------
-
-# %%
-ipd.Audio(mix, rate=sfreq)
+# Here is one (blended) stem for reference
+# ----------------------------------------
 
 # %%
 ipd.Audio(fx, rate=sfreq)
