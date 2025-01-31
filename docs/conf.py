@@ -31,7 +31,7 @@ html_static_path = ['_static']
 html_theme_options = {
     "light_logo": "_static/logo.svg",
     "dark_logo": "_static/logo_dark.png",
-    "color_mode": "light",
+    "color_mode": "auto",
     "accent_color": "tomato",
     "github_url": "https://github.com/scott-huberty",
     "linkedin_url": "https://github.com/scott-huberty",
