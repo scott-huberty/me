@@ -34,10 +34,11 @@ html_theme_options = {
     "color_mode": "auto",
     "accent_color": "tomato",
     "github_url": "https://github.com/scott-huberty",
-    "linkedin_url": "https://github.com/scott-huberty",
+    "linkedin_url": "https://www.linkedin.com/in/scott-h-40113b1a2/",
+    # The headers that appear at the top of the page
     "nav_links": [
         {
-            "title": "Blog",
+            "title": "Teaching",
             "url": "./auto_examples/index",
         },
         {
