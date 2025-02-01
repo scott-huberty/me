@@ -1,12 +1,19 @@
 """
-Use ICA to separate the instruments in a 100 Gecs song.
-=======================================================
+Use ICA to isolate the instruments in a 100 Gecs song.
+======================================================
 
 .. image:: https://i.kym-cdn.com/entries/icons/original/000/018/666/How_Do_You_Do_Fellow_Kids_meme_banner_image.jpg
 
 
-ICA is a wonderful algorithm. It can be used tease apart different "sources" in a
-signal.
+I really like ICA, and I use it all the time. But it's not the most intuitive algorithm,
+and it is relatively niche compared to supervised learning. While teaching my students
+about it, I wanted to give them an example that was more intuitive than say, artifact
+removal in EEG data (after all, ICA can be used for much more than just artifact
+removal). So here's my attempt at that, and also my attempt to pretend like I
+know what the kids are listening to these days.
+
+ICA is a method that can be used to separate a complex signal (or image, or whatever
+else) into its constituent parts.
 
 But there's a catch. You need to have multiple "observations" of this signal.
 The canonical example would be an orchestra performance recorded with multiple
