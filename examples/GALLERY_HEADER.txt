@@ -1,7 +1,7 @@
-ICA for musical source separation
-=================================
+Educational "blogs" about Machine Learning, Signal Processing, and Software Engineering
+=======================================================================================
 
-Below is a gallery of examples that simulate the separation of musical sources from a recording
-of "a band playing music", except we simulate the sources by mixing stems from the
-10,000 gecs stems pack. The goal is to show how ICA can be used to separate musical sources
-from a recording.
+I keep here a collection of educational "blog posts" that I've written over the years,
+mostly to help students I teach and mentor to solidify their understanding of various
+topics in machine learning, signal processing (and thus linear algebra and calculus),
+and software engineering.
