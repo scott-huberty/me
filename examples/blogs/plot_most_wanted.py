@@ -1,4 +1,5 @@
 """
+
 Use ICA to isolate the instruments in a 100 Gecs song.
 ======================================================
 
@@ -20,6 +21,8 @@ The canonical example would be an orchestra performance recorded with multiple
 microphones (a few in each section). Each microphone is one "observation". Since
 each microphone picks up a blend of all the instruments, you can use ICA to separate
 the individual instruments (so you'd have the violins isolated.. 0r the tuba.. etc.).
+
+.. image:: https://sweichwald.de/coroICA/duet_problem/schematic.png
 
 And no, you probably can't use ICA to separate the vocals from a song you downloaded
 from the internet.

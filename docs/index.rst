@@ -21,3 +21,4 @@ Scott Huberty
 
    me.rst
    auto_examples/index.rst
+   auto_examples/blogs/plot_most_wanted.rst

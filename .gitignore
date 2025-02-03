@@ -1,2 +1,11 @@
 docs/_build/
 
+# DS_Store files
+*.DS_Store
+
+# VS Code files
+*.code-workspace
+
+# Sphinx Gallery generated files
+docs/auto_examples/
+docs/sg_execution_times.rst

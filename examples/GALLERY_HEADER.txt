@@ -1,7 +1,7 @@
-Educational "blogs" about Machine Learning, Signal Processing, and Software Engineering
-=======================================================================================
+Educational Materials
+=====================
 
-I keep here a collection of educational "blog posts" that I've written over the years,
+I keep here a collection of educational materials and "blog posts" that I keep,
 mostly to help students I teach and mentor to solidify their understanding of various
-topics in machine learning, signal processing (and thus linear algebra and calculus),
+topics in statistics, machine learning, signal processing (and thus linear algebra and calculus),
 and software engineering.

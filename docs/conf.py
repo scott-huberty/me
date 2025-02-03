@@ -14,6 +14,9 @@ author = 'Scott Huberty'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    # built-in extensions
+    "sphinx.ext.mathjax",
+    # third-party extensions
     'sphinx_gallery.gen_gallery',
     ]
 
@@ -27,6 +30,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'shibuya'
 html_static_path = ['_static']
+# html_js_files = ["main.js"]
 
 html_theme_options = {
     "light_logo": "_static/logo.svg",
@@ -60,3 +64,10 @@ sphinx_gallery_conf = {
      'examples_dirs': '../examples',   # path to your example scripts
      'gallery_dirs': 'auto_examples',  # path to where to save gallery generated output
 }
+
+
+"""def setup(app):
+    # (create a setup() function if you don't already have one;
+    # or add to the existing setup() ...)
+    app.add_js_file("main.js", loading_method="defer")
+    app.add_css_file("custom.css")"""
