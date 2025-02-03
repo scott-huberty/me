@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="tomato" data-content_root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Accuracy, precision, and recall - Scott Huberty documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="prev" title="Deep Learning" href="index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e5f0bc64" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+    /* use light (400) and bold (800) weights */
+:root {
+    --sy-f-heading: 'Libre Baskerville', var(--sy-f-sys), sans-serif;
+    --sy-f-text: 'Open Sans', var(--sy-f-sys), sans-serif;
+    --sy-f-text-light: 400;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Accuracy, precision, and recall"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      <img class="light-logo" src="../../_static/logo.svg" alt="Scott Huberty" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../_static/logo_dark.png" alt="Scott Huberty" height="28" loading="lazy" />
+      <strong>Scott Huberty</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../.././auto_examples/index.html">Teaching</a></li><li class="link"><a href="../.././portfolio.html">Portfolio</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/scott-huberty" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../me.html">Bio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Educational Materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#blogs">Blogs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#deep-learning">Deep Learning</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../blogs/index.html">Blogs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../blogs/plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Deep Learning</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Accuracy, precision, and recall</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../blogs/plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#accuracy">Accuracy</a><ul>
+<li><a class="reference internal" href="#formula">Formula</a></li>
+<li><a class="reference internal" href="#interpretation">Interpretation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#precision">Precision</a><ul>
+<li><a class="reference internal" href="#id1">Formula</a></li>
+<li><a class="reference internal" href="#id2">Interpretation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recall-aka-sensitivity">Recall (aka Sensitivity)</a><ul>
+<li><a class="reference internal" href="#id3">Formula</a></li>
+<li><a class="reference internal" href="#id4">interpretation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#f1">F1</a><ul>
+<li><a class="reference internal" href="#id5">Formula</a></li>
+<li><a class="reference internal" href="#id6">Interpretation</a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">Scott Huberty</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Educational Materials</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Deep Learning</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Accuracy, precision, and recall</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-deep-learning-plot-accuracy-precision-recall-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="accuracy-precision-and-recall">
+<span id="sphx-glr-auto-examples-deep-learning-plot-accuracy-precision-recall-py"></span><h1>Accuracy, precision, and recall<a class="headerlink" href="#accuracy-precision-and-recall" title="Link to this heading">¶</a></h1>
+<figure class="align-default">
+<img alt="../../_images/accuracy.png" src="../../_images/accuracy.png" />
+</figure>
+<section id="accuracy">
+<h2>Accuracy<a class="headerlink" href="#accuracy" title="Link to this heading">¶</a></h2>
+<section id="formula">
+<h3>Formula<a class="headerlink" href="#formula" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\dfrac{\text{True Positives} + \text{True Negatives}}{\text{Total number of samples}}\]</div>
+</div>
+</section>
+<section id="interpretation">
+<h3>Interpretation<a class="headerlink" href="#interpretation" title="Link to this heading">¶</a></h3>
+<p>The proportion of correctly classified samples. It is an overall indicator
+of the model’s performance (irrespective of sample sizes and class/category (im)balance).</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Accuracy ignores possible biases introduced by unbalanced sample sizes. I.e. it
+ignores the “two ways of being wrong” problem (see below).</p>
+</div>
+</section>
+</section>
+<section id="precision">
+<h2>Precision<a class="headerlink" href="#precision" title="Link to this heading">¶</a></h2>
+<section id="id1">
+<h3>Formula<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\dfrac{\text{True Positives}}{\text{Total number of &quot;yes&quot; predictions}}\]</div>
+</div>
+</section>
+<section id="id2">
+<h3>Interpretation<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<p>Reveals when the model has a bias towards saying “yes”. Precision includes a penalty
+for misclassifying negative samples as positive. This is useful when the cost of
+misclassifying a negative sample as positive is high. For example, in fraud detection.</p>
+</section>
+</section>
+<section id="recall-aka-sensitivity">
+<h2>Recall (aka Sensitivity)<a class="headerlink" href="#recall-aka-sensitivity" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h3>Formula<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\dfrac{\text{True Positives}}{\text{Total number of actual positive samples}}\]</div>
+</div>
+</section>
+<section id="id4">
+<h3>interpretation<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>Reveals when the model has a bias for saying “no”. It includes a penalty for false
+negatives. This is useful when the cost of classifying a positive sample as
+negative is high, for example, in cancer detection.</p>
+</section>
+</section>
+<section id="f1">
+<h2>F1<a class="headerlink" href="#f1" title="Link to this heading">¶</a></h2>
+<p>The F1 score basically incorporates the 3 metrics above into a single metric.</p>
+<section id="id5">
+<h3>Formula<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\dfrac{ \text{True Positives} }{ \text{True Positives} + \dfrac{1}{2} (\text{False Positives} + \text{False Negatives}) }\]</div>
+</div>
+<p>The denominator is True Positives plus the average of the “two ways of being wrong”.</p>
+</section>
+<section id="id6">
+<h3>Interpretation<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p>The F1 provides a balance between precision and recall. It gives a general idea of
+whether the model is biased (but doesn’t tell you which way it is biased). An F1
+score is high when the model makes few mistakes.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.000 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-deep-learning-plot-accuracy-precision-recall-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/58870582d242a73b6a4c6fa7de165066/plot_accuracy_precision_recall.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_accuracy_precision_recall.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/13b1043b70598673ad458fdfd9f538d0/plot_accuracy_precision_recall.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_accuracy_precision_recall.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/e95276e02bed630b085c176830810205/plot_accuracy_precision_recall.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_accuracy_precision_recall.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Deep Learning</div></div>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Scott Huberty</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/scott-huberty" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a>
+<a href="https://www.linkedin.com/in/scott-h-40113b1a2/" aria-label="LinkedIn">
+  <iconify-icon icon="simple-icons:linkedin"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/shibuya.js?v=55e26b35"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></body>
+</html>

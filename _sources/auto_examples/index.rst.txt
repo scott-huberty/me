@@ -1,12 +1,31 @@
 :orphan:
 
-Educational "blogs" about Machine Learning, Signal Processing, and Software Engineering
-=======================================================================================
+Educational Materials
+=====================
 
-I keep here a collection of educational "blog posts" that I've written over the years,
+I keep here a collection of educational materials and "blog posts" that I keep,
 mostly to help students I teach and mentor to solidify their understanding of various
-topics in machine learning, signal processing (and thus linear algebra and calculus),
+topics in statistics, machine learning, signal processing (and thus linear algebra and calculus),
 and software engineering.
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Blogs
+=====
+
+A grab bag of posts demonstrating various concepts in machine learning,
+signal processing, and software engineering on fun datasets.
 
 
 .. raw:: html
@@ -21,10 +40,10 @@ and software engineering.
 
 .. only:: html
 
-  .. image:: /auto_examples/images/thumb/sphx_glr_plot_most_wanted_thumb.png
+  .. image:: /auto_examples/blogs/images/thumb/sphx_glr_plot_most_wanted_thumb.png
     :alt:
 
-  :ref:`sphx_glr_auto_examples_plot_most_wanted.py`
+  :ref:`sphx_glr_auto_examples_blogs_plot_most_wanted.py`
 
 .. raw:: html
 
@@ -38,11 +57,50 @@ and software engineering.
 
     </div>
 
+Deep Learning
+=============
+
+These tutorials demonstrate a variety of deep learning techniques for training
+neural networks, using the PyTorch framework.
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Accuracy --------">
+
+.. only:: html
+
+  .. image:: /auto_examples/deep_learning/images/thumb/sphx_glr_plot_accuracy_precision_recall_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_deep_learning_plot_accuracy_precision_recall.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Accuracy, precision, and recall</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
 
 .. toctree::
    :hidden:
+   :includehidden:
 
-   /auto_examples/plot_most_wanted
+
+   /auto_examples/blogs/index.rst
+   /auto_examples/deep_learning/index.rst
 
 
 .. only:: html
