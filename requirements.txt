@@ -1,7 +1,10 @@
 shibuya
 sphinx-gallery
+jupyter-sphinx
+sympy
 scikit-learn
 matplotlib
+seaborn
 ipython
 pooch
 tqdm
