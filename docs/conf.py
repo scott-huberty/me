@@ -17,7 +17,8 @@ extensions = [
     # built-in extensions
     "sphinx.ext.mathjax",
     # third-party extensions
-    'sphinx_gallery.gen_gallery',
+    "sphinx_gallery.gen_gallery",
+    "jupyter_sphinx"
     ]
 
 templates_path = ['_templates']
