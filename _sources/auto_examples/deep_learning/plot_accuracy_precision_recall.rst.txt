@@ -44,6 +44,133 @@ of the model's performance (irrespective of sample sizes and class/category (im)
     Accuracy ignores possible biases introduced by unbalanced sample sizes. I.e. it
     ignores the "two ways of being wrong" problem (see below).
 
+Example
+^^^^^^^
+
+.. GENERATED FROM PYTHON SOURCE LINES 33-107
+
+.. jupyter-execute::
+    :hide-code:
+
+    from pathlib import Path
+    import requests
+    import matplotlib.pyplot as plt
+    import matplotlib.font_manager as fm
+    import matplotlib.patches as patches
+    import seaborn as sns
+    sns.set_style("darkgrid")
+
+    # Use the raw.githubusercontent.com domain for direct access to the raw file
+    github_url = 'https://raw.githubusercontent.com/google/fonts/master/ofl/librebaskerville/LibreBaskerville-Regular.ttf'
+
+    response = requests.get(github_url)
+    response.raise_for_status()  # Raise an exception for bad responses
+
+    temp_file = Path("LibreBaskerville-Regular.ttf")
+    with temp_file.open("wb") as f:
+       f.write(response.content)
+
+    font_prop = fm.FontProperties(fname=temp_file)
+    font_dict = {'fontproperties': font_prop, "size": 14}
+
+    fig, ax = plt.subplots()
+    # Set x-axis range
+    ax.set_xlim((1,9))
+    ax.set_xticks([])
+    # Set y-axis range
+    ax.set_ylim((1,9))
+    ax.set_yticks([])
+    ax.set_ylabel(r"Model $\Theta(\hat{y})$", **font_dict)
+
+    # Draw lines to split quadrants
+    ax.plot([5,5],[1,9], linewidth=2, color="#e5e5e2")
+    ax.plot([1,9],[5,5], linewidth=2, color="#e5e5e2")
+    ax.set_title('Reality', **font_dict)
+
+    tomato = "#FE5431E4"
+    blue = "#0090FF"
+    width, height = 4, 4
+
+    top_left_square = patches.Rectangle(
+        (1, 5), width, height, linewidth=1, edgecolor='none', facecolor=blue
+    )
+    top_right_square = patches.Rectangle(
+        (5, 5), width, height, linewidth=1, edgecolor='none', facecolor=tomato
+    )
+    bottom_left_square = patches.Rectangle(
+        (1, 1), width, height, linewidth=1, edgecolor='none', facecolor=tomato
+    )
+    bottom_right_square = patches.Rectangle(
+        (5, 1), width, height, linewidth=1, edgecolor='none', facecolor=blue
+    )
+
+    ax.add_patch(top_left_square)
+    ax.add_patch(top_right_square)
+    ax.add_patch(bottom_left_square)
+    ax.add_patch(bottom_right_square)
+
+    # Add labels
+    ax.text(2, 8, "True Positive", **font_dict)
+    ax.text(6, 8, "False Positive", **font_dict)
+    ax.text(2, 4, "False Negative", **font_dict)
+    ax.text(6, 4, "True Negative", **font_dict)
+
+    # Add numbers
+    text_dict = {"fontsize": 18, "weight": "bold", "family": "sans-serif"}
+    ax.text(2.5, 7, 60, **text_dict) # True Positive
+    ax.text(6.5, 7, 25, **text_dict) # False Positive
+    ax.text(6.5, 3, 15, **text_dict) # True Negative
+    ax.text(2.5, 3, 0, **text_dict) # False Negative
+    fig.suptitle("Cat or dog: Actual cat photos vs model predictions (N=100)", **font_dict)
+    plt.show()
+
+.. GENERATED FROM PYTHON SOURCE LINES 109-128
+
+.. code-block:: Python
+
+    import numpy as np
+
+    N = 100
+    samples = np.array(["cat"] * 60 + ["dog"] * 40)
+    # Model always predicts cat
+    predictions = np.array(["cat"] * 85 + ["dog"] * 15)
+
+    print(f"Number of cats in sample: {np.sum(samples == 'cat')}")
+    print(f"Number of dogs in sample: {np.sum(samples == 'dog')}")
+    print(f"Number of cats that model predicts are in sample: {np.sum(predictions == 'cat')}")
+
+    total = len(samples)
+    TP = np.sum((samples == "cat") & (predictions == "cat")) # True Positives
+    TN = np.sum((samples == "dog") & (predictions == "dog")) # True Negatives
+    FP = np.sum((samples == "dog") & (predictions == "cat")) # False Positives
+    FN = np.sum((samples == "cat") & (predictions == "dog")) # False Negatives
+    accuracy = (TP + TN) / total
+    print(f"Accuracy = ({TP} + {TN}) / {total} = {accuracy}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Number of cats in sample: 60
+    Number of dogs in sample: 40
+    Number of cats that model predicts are in sample: 85
+    Accuracy = (60 + 15) / 100 = 0.75
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 129-132
+
+For every photo of a cat, the model correctly categorizes the photo as cat. But notice
+that the model also incorreclty categorizes 15 dog photos as cat. Do you think that
+the accuracy score sufficiently captures the model's performance?
+
+.. GENERATED FROM PYTHON SOURCE LINES 134-155
+
 Precision
 ---------
 
@@ -60,6 +187,42 @@ Interpretation
 Reveals when the model has a bias towards saying "yes". Precision includes a penalty
 for misclassifying negative samples as positive. This is useful when the cost of
 misclassifying a negative sample as positive is high. For example, in fraud detection.
+
+
+Example
+^^^^^^^
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 157-161
+
+.. code-block:: Python
+
+    precision = TP / (TP + FP)
+    print(f"Accuracy = ({TP} + {TN}) / {total} = {accuracy}")
+    print(f"Precision = {TP} / ({TP} + {FP})", f"{precision:.2f}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Accuracy = (60 + 15) / 100 = 0.75
+    Precision = 60 / (60 + 25) 0.71
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 162-166
+
+The precision score is 0.7. This means that the model is correct 70% of the time
+when it predicts "cat". This is lower than the accuracy of .75 because the model
+is being penalized for misclassifying dog photos as cat photos. Do you think that
+this improves upon the accuracy score?
+
+.. GENERATED FROM PYTHON SOURCE LINES 168-188
 
 Recall (aka Sensitivity)
 ------------------------
@@ -78,11 +241,42 @@ Reveals when the model has a bias for saying "no". It includes a penalty for fal
 negatives. This is useful when the cost of classifying a positive sample as
 negative is high, for example, in cancer detection.
 
+Example
+^^^^^^^
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 190-193
+
+.. code-block:: Python
+
+    recall = TP / (TP + FN)
+    print(f"Recall = {TP} / ({TP} + {FN}) = {recall:.2f}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Recall = 60 / (60 + 0) = 1.00
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 194-197
+
+The recall score is 1.0 (100%!), which indicates that the model does NOT have a bias
+towards saying "no". We can see this in the data, as the model doesn't misclassify any
+cat photo as dog photos.
+
+.. GENERATED FROM PYTHON SOURCE LINES 199-223
 
 F1
 --
 
-The F1 score basically incorporates the 3 metrics above into a single metric.
+The F1 score basically accuracy, precision, and recall into a single metric.
 
 Formula
 ^^^^^^^
@@ -100,10 +294,220 @@ The F1 provides a balance between precision and recall. It gives a general idea 
 whether the model is biased (but doesn't tell you which way it is biased). An F1
 score is high when the model makes few mistakes.
 
+Example
+^^^^^^^
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 225-228
+
+.. code-block:: Python
+
+    f1 = TP / (TP + (np.mean(FP + FN)))
+    print(f"F1 = {TP} / ({TP} + (1/2)*({FP} + {FN})) = {f1:.2f}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    F1 = 60 / (60 + (1/2)*(25 + 0)) = 0.71
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 229-232
+
+Summary
+-------
+As a reminder, here are the scores we calculated:
+
+.. GENERATED FROM PYTHON SOURCE LINES 234-239
+
+.. code-block:: Python
+
+    print(f"Accuracy = {accuracy:.2f}")
+    print(f"Precision = {precision:.2f}")
+    print(f"Recall = {recall:.2f}")
+    print(f"F1 = {f1:.2f}")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Accuracy = 0.75
+    Precision = 0.71
+    Recall = 1.00
+    F1 = 0.71
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 240-242
+
+The F1 score is 0.71, do o you think this provides a good balance between precision,
+recall, and accuracy?
+
+.. GENERATED FROM PYTHON SOURCE LINES 245-255
+
+Visualizing the relationship between, accuracy, precision, recall, and F1
+-------------------------------------------------------------------------
+
+People often say that the F1 score is a "harmonic mean" of precision and recall.
+One way to think of this, is that the F1 score will penalize the model for being
+biased towards saying "yes" or "no".
+
+.. seealso::
+   `Stack Overflow: Harmonic Mean <https://stackoverflow.com/questions/26355942/why-is-the-f-measure-a-harmonic-mean-and-not-an-arithmetic-mean-of-the-precision>`_
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 257-258
+
+import libraries
+
+.. GENERATED FROM PYTHON SOURCE LINES 258-300
+
+.. code-block:: Python
+
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    # Let's run an experiment
+    n = 50
+    n_experiments = 10_000
+    # initialize arrays to store the results
+    accuracies = np.zeros(n_experiments)
+    precisions = np.zeros(n_experiments)
+    recalls = np.zeros(n_experiments)
+    f1_scores = np.zeros(n_experiments)
+
+    # run the experiment
+    for experiment in range(n_experiments):
+        # generate random data
+        tp = np.random.randint(1, n)
+        fn = n - tp
+        fp = np.random.randint(1, n)
+        tn = n - fp
+
+        # calculate metrics
+        accuracies[experiment] = (tp + tn) / (2*n)
+        precisions[experiment] = tp / (tp + fp)
+        recalls[experiment] = tp / (tp + fn)
+        f1_scores[experiment] = tp / (tp + (fp + fn) / 2)
+
+    # plot the results
+    sns.set_style("darkgrid")
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4), constrained_layout=True)
+
+    for this_ax, metric, title in zip(axes, [precisions, recalls], ["Precision", "Recall"]):
+        sc = this_ax.scatter(accuracies, f1_scores, c=metric, s=5)
+        this_ax.plot([0, 1], [.5, .5], color="black", linestyle="--", linewidth=.5)
+        this_ax.plot([.5, .5], [0, 1], color="black", linestyle="--", linewidth=.5)
+        this_ax.set_title(f"F1-Accuracy vs {title}")
+        this_ax.set_xlabel("Accuracy")
+        this_ax.set_ylabel("F1-Score")
+        # Add colorbar
+        cbar = fig.colorbar(sc, ax=this_ax)
+        cbar.set_label(title)
+    plt.show()
+
+
+
+
+.. image-sg:: /auto_examples/deep_learning/images/sphx_glr_plot_accuracy_precision_recall_001.png
+   :alt: F1-Accuracy vs Precision, F1-Accuracy vs Recall
+   :srcset: /auto_examples/deep_learning/images/sphx_glr_plot_accuracy_precision_recall_001.png
+   :class: sphx-glr-single-img
+
+
+
+
+
+.. GENERATED FROM PYTHON SOURCE LINES 301-327
+
+When Precision, Recall, and F1 are the same
+-------------------------------------------
+
+When would precision and recall be the same? Let's remind ourselves of the formulas:
+
+.. table::
+
+   +-----------------------------+-----------------------------+----------------------------------------------+
+   | Precision                   | Recall                      | F1 Score                                     |
+   +=============================+=============================+==============================================+
+   | :math:`\dfrac{TP}{TP + FP}` | :math:`\dfrac{TP}{TP + FN}` | :math:`\dfrac{TP}{TP + \text{mean(FP + FN)}}`|
+   +-----------------------------+-----------------------------+----------------------------------------------+
+
+When will these fractions be equal? Well they only differ in the denominator, in
+that precision cares about False Positives, recall cares about False Negatives, and
+F1 weighs them equally (it takes an average). So, if their denominators are equal,
+then the fractions will be equal. Put differently, if the model makes the same
+number of False Positives as False Negatives, then it doesn't have a bias towards
+saying "yes" or "no".
+
+To add one more layer of complexity, if precision and recall are equal, then surely
+the F1 score will be equal to them as well.. Because the average of two equal numbers
+is the same as the numbers themselves. This makes the F1 fraction equal to both the
+precision and recall fractions. 
+
+To drive that point home, let's provide an example in code:
+
+.. GENERATED FROM PYTHON SOURCE LINES 329-352
+
+.. code-block:: Python
+
+    from sympy import symbols, solve, simplify
+
+    # Define variables for confusion matrix
+    tp, tn, fp, fn = symbols('tp tn fp fn')
+
+    # Basic metrics 
+    accuracy = (tp + tn) / (tp + tn + fp + fn)
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1 = 2 * (precision * recall) / (precision + recall)
+
+    # Try to solve system of equations
+    # We want the number of true positives to be equal to the number of false negatives
+    solution = solve([
+        fp - fn
+    ])
+
+    print("Solution space:")
+    print(solution)
+
+    print("\nMetrics in terms of remaining variables:")
+    print(f"Precision = {simplify(precision.subs(solution))}")
+    print(f"Recall = {simplify(recall.subs(solution))}")
+    print(f"F1 Score = {simplify(f1.subs(solution))}")
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+    Solution space:
+    {fn: fp}
+
+    Metrics in terms of remaining variables:
+    Precision = tp/(fp + tp)
+    Recall = tp/(fp + tp)
+    F1 Score = tp/(fp + tp)
+
+
+
+
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.000 seconds)
+   **Total running time of the script:** (0 minutes 1.188 seconds)
 
 
 .. _sphx_glr_download_auto_examples_deep_learning_plot_accuracy_precision_recall.py:
