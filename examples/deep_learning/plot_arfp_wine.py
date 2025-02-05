@@ -1,10 +1,9 @@
 """
 
-Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset
-=================================================================
+Compute Accuracy, Precision, Recall, and F1 on the Wine dataset
+================================================================
 
-Let's practice computing the accuracy, precision, recall, and F1 score on the Wine dataset.
-We'll also use Scikit Learn to compute these metrics for us.
+We'll use Scikit Learn to compute these metrics for us.
 """
 
 #%%
@@ -12,6 +11,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
+from sklearn.metrics import (
+  accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+  )
 from sklearn.model_selection import train_test_split
 
 # for number-crunching
@@ -22,16 +24,12 @@ import polars as pl
 
 # for data visualization
 import matplotlib.pyplot as plt
-import matplotlib_inline.backend_inline
 import seaborn as sns
 
 # %%
 # Load the Wine dataset
 # ---------------------
 # We'll use the Wine dataset from the UCI Machine Learning Repository.
-# The dataset has 178 samples with 13 features each.
-# The features are chemical properties of the wines.
-# The target variable is the wine class (1, 2, or 3).
 
 # %%
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
@@ -66,12 +64,12 @@ train_tensor = df.select(
     [col for col in df.columns if col not in ["quality", "good_quality"]]
 ).to_torch().float()
 labels_tensor = df.select("good_quality").to_torch().float()
-print(train_tensor.shape, labels_tensor.shape)
+print(f"train_tensor shape: {train_tensor.shape}", f"labels_tensor shape: {labels_tensor.shape}")
 
 # %%
 # Split the data
 # --------------
-# We'll plit the data into training and testing sets using Scikit Learn
+#
 
 # %%
 train_data, test_data, train_labels, test_labels = train_test_split(train_tensor, labels_tensor, test_size=.1)
@@ -112,57 +110,44 @@ class WineNet(nn.Module):
     return self.output(x)
 
 # %%
-# Define a function to train the model
+# Train the model
 # ------------------------------------
 #
 
 # %%
-def train_the_model(
-    wine_net,
-    train_loader,
-    test_loader,
-    num_epochs=1_000,
-    ):
-  """Train the model on the Wine dataset.
+wine_net = WineNet()
+num_epochs = 500
+# loss function and optimizer
+lossfun = nn.BCEWithLogitsLoss()
+optimizer = torch.optim.SGD(wine_net.parameters(), lr=.01)
 
-  Parameters
-  ----------
-  wine_net : WineNet
-    The neural network model defined above
-  num_epochs : int
-    The number of epochs to train the model
-  """
-  # loss function and optimizer
-  lossfun = nn.BCEWithLogitsLoss()
-  optimizer = torch.optim.SGD(wine_net.parameters(),lr=.01)
+# initialize losses
+losses   = torch.zeros(num_epochs)
+train_accuracies = []
+test_accuracies  = []
 
-  # initialize losses
-  losses   = torch.zeros(num_epochs)
-  train_accuracies = []
-  test_accuracies  = []
-
-  # loop over epochs
-  for epochi in range(num_epochs):
-
+# loop over epochs
+for epochi in range(num_epochs):
     # loop over training data batches
     batch_accuracies  = []
     batch_losses = []
     for x, y in train_loader:
-      # forward pass and loss
-      y_hat = wine_net(x)
-      loss = lossfun(y_hat , y)
+        # forward pass and loss
+        y_hat = wine_net(x)
+        loss = lossfun(y_hat , y)
 
-      # backprop
-      optimizer.zero_grad()
-      loss.backward()
-      optimizer.step()
+        # backprop
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-      # loss from this batch
-      batch_losses.append(loss.item())
+        # loss from this batch
+        batch_losses.append(loss.item())
 
-      # compute training accuracy for this batch
-      batch_accuracies.append( 100 * torch.mean(((y_hat > 0) == y).float()).item() )
-    # end of batch loop...
+        # compute training accuracy for this batch
+        accuracy = 100 * torch.mean(((y_hat > 0) == y).float()).item()
+        batch_accuracies.append(accuracy)
+        # end of batch loop...
 
     # now that we've trained through the batches, get their average training accuracy
     train_accuracies.append( np.mean(batch_accuracies) )
@@ -173,24 +158,9 @@ def train_the_model(
     # test accuracy
     x, y = next(iter(test_loader)) # extract X, y from test dataloader
     with torch.no_grad(): # deactivates autograd
-      y_hat = wine_net(x)
-    test_accuracies.append( 100 * torch.mean(((y_hat > 0) == y).float()).item() )
-  
-  # function output
-  return train_accuracies, test_accuracies, losses
-
-# %%
-# Train the model
-# ---------------
-#
-
-# %%
-wine_net = WineNet()
-train_accuracies, test_accuracies, losses = train_the_model(
-  wine_net,
-  train_loader,
-  test_loader,
-  )
+        y_hat = wine_net(x)
+        test_acc = 100 * torch.mean(((y_hat > 0) == y).float()).item()
+        test_accuracies.append(test_acc)
 
 # %%
 # Compute the accuracy, precision, recall, and F1 score on the train and test sets
@@ -200,17 +170,6 @@ train_accuracies, test_accuracies, losses = train_the_model(
 # %%
 train_predictions = wine_net(train_loader.dataset.tensors[0])
 test_predictions = wine_net(test_loader.dataset.tensors[0])
-test_predictions
-
-# %%
-# Use Scikit Learn to compute the metrics
-# ---------------------------------------
-#
-
-# %%
-from sklearn.metrics import (
-  accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-  )
 
 # initialize a dictionary to store the metrics
 train_metrics = [0, 0, 0, 0]
@@ -231,7 +190,9 @@ test_metrics[0] = accuracy_score(true_labels, test_predictions)
 test_metrics[1] = precision_score(true_labels, test_predictions)
 test_metrics[2] = recall_score(true_labels, test_predictions)
 test_metrics[3] = f1_score(true_labels, test_predictions)
-print(train_metrics, test_metrics)
+for i, metric in enumerate(['Accuracy', 'Precision', 'Recall', 'F1-score']):
+    print(f'{metric} (train): {train_metrics[i]:.2f}')
+    print(f'{metric} (test): {test_metrics[i]:.2f}')
 
 # %%
 # Plot the metrics
@@ -241,11 +202,12 @@ print(train_metrics, test_metrics)
 # %%
 sns.set_style("darkgrid")
 fig, ax = plt.subplots()
+
 ax.bar(np.arange(4) -.1, train_metrics, .5)
 ax.bar(np.arange(4) +.1, test_metrics, .5)
-ax.set_xticks([0,1,2,3],['Accuracy','Precision','Recall','F1-score'])
+ax.set_xticks([0, 1, 2, 3], ['Accuracy', 'Precision', 'Recall', 'F1-score'])
 ax.set_ylim([.6,1])
-ax.legend(['Train','Test'])
+ax.legend(['Train', 'Test'])
 ax.set_title('Performance metrics')
 plt.show()
 
@@ -262,9 +224,9 @@ train_conf = confusion_matrix(true_labels_train, train_predictions>0)
 test_conf  = confusion_matrix(true_labels_test, test_predictions>0)
 
 sns.set_style('white')
-fig, axes = plt.subplots(1,2,figsize=(10,4))
+fig, axes = plt.subplots(1, 2, figsize=(10,4))
 
-# confmat during TRAIN
+# Confusion Matrix (train)
 axes[0].imshow(train_conf, 'Blues', vmax=len(train_predictions)/2)
 axes[0].set_xticks([0,1])
 axes[0].set_yticks([0,1])
@@ -276,13 +238,13 @@ axes[0].set_title('TRAIN confusion matrix')
 
 # add text labels
 text_kwargs = dict(ha='center', va='center')
-axes[0].text(0,0,f'True negatives:\n{train_conf[0, 0]}' , **text_kwargs)
-axes[0].text(0,1,f'False negatives:\n{train_conf[1, 0]}', **text_kwargs)
-axes[0].text(1,1,f'True positives:\n{train_conf[1, 1]}' , **text_kwargs)
-axes[0].text(1,0,f'False positives:\n{train_conf[0, 1]}', **text_kwargs)
+axes[0].text(0, 0, f'True negatives:\n{train_conf[0, 0]}' , **text_kwargs)
+axes[0].text(0, 1, f'False negatives:\n{train_conf[1, 0]}', **text_kwargs)
+axes[0].text(1, 1, f'True positives:\n{train_conf[1, 1]}' , **text_kwargs)
+axes[0].text(1, 0, f'False positives:\n{train_conf[0, 1]}', **text_kwargs)
 
-# confmat during TEST
-axes[1].imshow(test_conf,'Blues',vmax=len(test_predictions)/2)
+# Confusion Matrix (test)
+axes[1].imshow(test_conf, 'Blues', vmax=len(test_predictions)/2)
 axes[1].set_xticks([0,1])
 axes[1].set_yticks([0,1])
 axes[1].set_xticklabels(['bad','good'])
@@ -292,8 +254,8 @@ axes[1].set_ylabel('True quality')
 axes[1].set_title('TEST confusion matrix')
 
 # add text labels
-axes[1].text(0,0,f'True negatives:\n{test_conf[0,0]}', **text_kwargs)
-axes[1].text(0,1,f'False negatives:\n{test_conf[1,0]}', **text_kwargs)
-axes[1].text(1,1,f'True positives:\n{test_conf[1,1]}' , **text_kwargs)
-axes[1].text(1,0,f'False positives:\n{test_conf[0,1]}', **text_kwargs)
+axes[1].text(0, 0, f'True negatives:\n{test_conf[0,0]}', **text_kwargs)
+axes[1].text(0, 1, f'False negatives:\n{test_conf[1,0]}', **text_kwargs)
+axes[1].text(1, 1, f'True positives:\n{test_conf[1,1]}' , **text_kwargs)
+axes[1].text(1, 0, f'False positives:\n{test_conf[0,1]}', **text_kwargs)
 plt.show()
