@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="tomato" data-content_root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset - Scott Huberty documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="prev" title="Accuracy, precision, and recall" href="plot_accuracy_precision_recall.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=e5f0bc64" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+    /* use light (400) and bold (800) weights */
+:root {
+    --sy-f-heading: 'Libre Baskerville', var(--sy-f-sys), sans-serif;
+    --sy-f-text: 'Open Sans', var(--sy-f-sys), sans-serif;
+    --sy-f-text-light: 400;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      <img class="light-logo" src="../../_static/logo.svg" alt="Scott Huberty" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../_static/logo_dark.png" alt="Scott Huberty" height="28" loading="lazy" />
+      <strong>Scott Huberty</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../.././auto_examples/index.html">Teaching</a></li><li class="link"><a href="../.././portfolio.html">Portfolio</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/scott-huberty" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../me.html">Bio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Educational Materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#blogs">Blogs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#deep-learning">Deep Learning</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../blogs/index.html">Blogs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../blogs/plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Deep Learning</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_accuracy_precision_recall.html">Accuracy, precision, and recall</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../blogs/plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#load-the-wine-dataset">Load the Wine dataset</a></li>
+<li><a class="reference internal" href="#convert-to-torch-tensors">Convert to torch tensors</a></li>
+<li><a class="reference internal" href="#split-the-data">Split the data</a></li>
+<li><a class="reference internal" href="#define-the-model">Define the model</a></li>
+<li><a class="reference internal" href="#define-a-function-to-train-the-model">Define a function to train the model</a></li>
+<li><a class="reference internal" href="#train-the-model">Train the model</a></li>
+<li><a class="reference internal" href="#compute-the-accuracy-precision-recall-and-f1-score-on-the-train-and-test-sets">Compute the accuracy, precision, recall, and F1 score on the train and test sets</a></li>
+<li><a class="reference internal" href="#use-scikit-learn-to-compute-the-metrics">Use Scikit Learn to compute the metrics</a></li>
+<li><a class="reference internal" href="#plot-the-metrics">Plot the metrics</a></li>
+<li><a class="reference internal" href="#show-the-confusion-matrices">Show the confusion matrices</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">Scott Huberty</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Educational Materials</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Deep Learning</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-deep-learning-plot-arfp-wine-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="computer-accuracy-precision-recaall-and-f1-on-the-wine-dataset">
+<span id="sphx-glr-auto-examples-deep-learning-plot-arfp-wine-py"></span><h1>Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset<a class="headerlink" href="#computer-accuracy-precision-recaall-and-f1-on-the-wine-dataset" title="Link to this heading">¶</a></h1>
+<p>Let’s practice computing the accuracy, precision, recall, and F1 score on the Wine dataset.
+We’ll also use Scikit Learn to compute these metrics for us.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+</span><span data-line="2"><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+</span><span data-line="3"><span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+</span><span data-line="5"><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># for number-crunching</span>
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span data-line="9">
+</span><span data-line="10"><span class="c1"># for dataset management</span>
+</span><span data-line="11"><span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+</span><span data-line="12">
+</span><span data-line="13"><span class="c1"># for data visualization</span>
+</span><span data-line="14"><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</span><span data-line="15"><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib_inline.backend_inline</span>
+</span><span data-line="16"><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+</span></pre></div>
+</div>
+<section id="load-the-wine-dataset">
+<h2>Load the Wine dataset<a class="headerlink" href="#load-the-wine-dataset" title="Link to this heading">¶</a></h2>
+<p>We’ll use the Wine dataset from the UCI Machine Learning Repository.
+The dataset has 178 samples with 13 features each.
+The features are chemical properties of the wines.
+The target variable is the wine class (1, 2, or 3).</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv&quot;</span>
+</span><span data-line="2"><span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">infer_schema_length</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">))</span>
+</span><span data-line="3"><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col_name</span> <span class="p">:</span> <span class="n">col_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
+</span><span data-line="4"><span class="c1"># Drop a few outliers</span>
+</span><span data-line="5"><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;total_sulfur_dioxide&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">)</span>
+</span><span data-line="6">
+</span><span data-line="7"><span class="n">z_scores</span> <span class="o">=</span> <span class="p">[</span>
+</span><span data-line="8">    <span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span> <span class="o">-</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span> <span class="o">/</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+</span><span data-line="9">    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span>
+</span><span data-line="10">    <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;quality&quot;</span>
+</span><span data-line="11">    <span class="p">]</span>
+</span><span data-line="12"><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">([</span>
+</span><span data-line="13">    <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">),</span>
+</span><span data-line="14">    <span class="o">*</span><span class="n">z_scores</span>
+</span><span data-line="15"><span class="p">])</span>
+</span><span data-line="16">
+</span><span data-line="17"><span class="c1"># create a new column for binarized (boolean) quality</span>
+</span><span data-line="18"><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+</span><span data-line="19">    <span class="n">pl</span><span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">then</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">otherwise</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;good_quality&quot;</span><span class="p">)</span>
+</span><span data-line="20"><span class="p">)</span>
+</span><span data-line="21"><span class="n">df</span>
+</span></pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div><style>
+.dataframe > thead > tr,
+.dataframe > tbody > tr {
+  text-align: right;
+  white-space: pre-wrap;
+}
+</style>
+<small>shape: (1_597, 13)</small><table border="1" class="dataframe"><thead><tr><th>quality</th><th>fixed_acidity</th><th>volatile_acidity</th><th>citric_acid</th><th>residual_sugar</th><th>chlorides</th><th>free_sulfur_dioxide</th><th>total_sulfur_dioxide</th><th>density</th><th>pH</th><th>sulphates</th><th>alcohol</th><th>good_quality</th></tr><tr><td>i64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>f64</td><td>i32</td></tr></thead><tbody><tr><td>5</td><td>-0.528185</td><td>0.960356</td><td>-1.391387</td><td>-0.452437</td><td>-0.244571</td><td>-0.464413</td><td>-0.382415</td><td>0.556633</td><td>1.288066</td><td>-0.580034</td><td>-0.959006</td><td>0</td></tr><tr><td>5</td><td>-0.29858</td><td>1.965999</td><td>-1.391387</td><td>0.049005</td><td>0.222757</td><td>0.876758</td><td>0.654456</td><td>0.025914</td><td>-0.723425</td><td>0.127797</td><td>-0.583159</td><td>0</td></tr><tr><td>5</td><td>-0.29858</td><td>1.29557</td><td>-1.185609</td><td>-0.165899</td><td>0.095304</td><td>-0.081221</td><td>0.245992</td><td>0.132058</td><td>-0.334104</td><td>-0.049161</td><td>-0.583159</td><td>0</td></tr><tr><td>6</td><td>1.653061</td><td>-1.386143</td><td>1.489509</td><td>-0.452437</td><td>-0.265814</td><td>0.110375</td><td>0.434514</td><td>0.662777</td><td>-0.982972</td><td>-0.462063</td><td>-0.583159</td><td>1</td></tr><tr><td>5</td><td>-0.528185</td><td>0.960356</td><td>-1.391387</td><td>-0.452437</td><td>-0.244571</td><td>-0.464413</td><td>-0.382415</td><td>0.556633</td><td>1.288066</td><td>-0.580034</td><td>-0.959006</td><td>0</td></tr><tr><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td><td>&hellip;</td></tr><tr><td>5</td><td>-1.216999</td><td>0.401666</td><td>-0.979831</td><td>-0.380803</td><td>0.05282</td><td>1.547343</td><td>-0.068212</td><td>-0.982451</td><td>0.898745</td><td>-0.462063</td><td>0.074575</td><td>0</td></tr><tr><td>6</td><td>-1.389203</td><td>0.122321</td><td>-0.876942</td><td>-0.237533</td><td>-0.541962</td><td>2.217928</td><td>0.151731</td><td>-0.865693</td><td>1.352953</td><td>0.599684</td><td>0.732309</td><td>1</td></tr><tr><td>6</td><td>-1.159598</td><td>-0.101155</td><td>-0.722608</td><td>-0.165899</td><td>-0.244571</td><td>1.259949</td><td>-0.193893</td><td>-0.536647</td><td>0.704085</td><td>0.540698</td><td>0.544385</td><td>1</td></tr><tr><td>5</td><td>-1.389203</td><td>0.653076</td><td>-0.774052</td><td>-0.380803</td><td>-0.265814</td><td>1.547343</td><td>-0.068212</td><td>-0.679941</td><td>1.677387</td><td>0.304754</td><td>-0.207311</td><td>0</td></tr><tr><td>6</td><td>-1.331802</td><td>-1.218536</td><td>1.026508</td><td>0.765351</td><td>-0.435751</td><td>0.206172</td><td>-0.131053</td><td>-0.669327</td><td>0.509424</td><td>0.009825</td><td>0.544385</td><td>1</td></tr></tbody></table></div>
+</div>
+<br />
+<br /></section>
+<section id="convert-to-torch-tensors">
+<h2>Convert to torch tensors<a class="headerlink" href="#convert-to-torch-tensors" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">train_tensor</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+</span><span data-line="2">    <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">,</span> <span class="s2">&quot;good_quality&quot;</span><span class="p">]]</span>
+</span><span data-line="3"><span class="p">)</span><span class="o">.</span><span class="n">to_torch</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+</span><span data-line="4"><span class="n">labels_tensor</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;good_quality&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_torch</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+</span><span data-line="5"><span class="nb">print</span><span class="p">(</span><span class="n">train_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">labels_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">torch.Size([1597, 11]) torch.Size([1597, 1])
+</span></pre></div>
+</div>
+</section>
+<section id="split-the-data">
+<h2>Split the data<a class="headerlink" href="#split-the-data" title="Link to this heading">¶</a></h2>
+<p>We’ll plit the data into training and testing sets using Scikit Learn</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">train_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">,</span> <span class="n">test_labels</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">train_tensor</span><span class="p">,</span> <span class="n">labels_tensor</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">.1</span><span class="p">)</span>
+</span><span data-line="2"><span class="c1"># then convert them into PyTorch Datasets (note: already converted to tensors)</span>
+</span><span data-line="3"><span class="n">train_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">train_labels</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">test_dataset</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">test_labels</span><span class="p">)</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="c1"># Finally, create the DataLoader objects</span>
+</span><span data-line="7"><span class="n">n_samples</span> <span class="o">=</span> <span class="n">test_dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span data-line="8"><span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span data-line="9"><span class="n">test_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">test_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="define-the-model">
+<h2>Define the model<a class="headerlink" href="#define-the-model" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">class</span><span class="w"> </span><span class="nc">WineNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+</span><span data-line="2">  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="3">    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span data-line="4">
+</span><span data-line="5">    <span class="c1">### input layer</span>
+</span><span data-line="6">    <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
+</span><span data-line="7">
+</span><span data-line="8">    <span class="c1">### hidden layers</span>
+</span><span data-line="9">    <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+</span><span data-line="10">    <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+</span><span data-line="11">
+</span><span data-line="12">    <span class="c1">### output layer</span>
+</span><span data-line="13">    <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="14">
+</span><span data-line="15">  <span class="c1"># forward pass</span>
+</span><span data-line="16">  <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+</span><span data-line="17">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+</span><span data-line="18">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+</span><span data-line="19">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
+</span><span data-line="20">    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="define-a-function-to-train-the-model">
+<h2>Define a function to train the model<a class="headerlink" href="#define-a-function-to-train-the-model" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">def</span><span class="w"> </span><span class="nf">train_the_model</span><span class="p">(</span>
+</span><span data-line="2">    <span class="n">wine_net</span><span class="p">,</span>
+</span><span data-line="3">    <span class="n">train_loader</span><span class="p">,</span>
+</span><span data-line="4">    <span class="n">test_loader</span><span class="p">,</span>
+</span><span data-line="5">    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1_000</span><span class="p">,</span>
+</span><span data-line="6">    <span class="p">):</span>
+</span><span data-line="7"><span class="w">  </span><span class="sd">&quot;&quot;&quot;Train the model on the Wine dataset.</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="sd">  Parameters</span>
+</span><span data-line="10"><span class="sd">  ----------</span>
+</span><span data-line="11"><span class="sd">  wine_net : WineNet</span>
+</span><span data-line="12"><span class="sd">    The neural network model defined above</span>
+</span><span data-line="13"><span class="sd">  num_epochs : int</span>
+</span><span data-line="14"><span class="sd">    The number of epochs to train the model</span>
+</span><span data-line="15"><span class="sd">  &quot;&quot;&quot;</span>
+</span><span data-line="16">  <span class="c1"># loss function and optimizer</span>
+</span><span data-line="17">  <span class="n">lossfun</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+</span><span data-line="18">  <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">wine_net</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span><span class="n">lr</span><span class="o">=</span><span class="mf">.01</span><span class="p">)</span>
+</span><span data-line="19">
+</span><span data-line="20">  <span class="c1"># initialize losses</span>
+</span><span data-line="21">  <span class="n">losses</span>   <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">)</span>
+</span><span data-line="22">  <span class="n">train_accuracies</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="23">  <span class="n">test_accuracies</span>  <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="24">
+</span><span data-line="25">  <span class="c1"># loop over epochs</span>
+</span><span data-line="26">  <span class="k">for</span> <span class="n">epochi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
+</span><span data-line="27">
+</span><span data-line="28">    <span class="c1"># loop over training data batches</span>
+</span><span data-line="29">    <span class="n">batch_accuracies</span>  <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="30">    <span class="n">batch_losses</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span data-line="31">    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">train_loader</span><span class="p">:</span>
+</span><span data-line="32">      <span class="c1"># forward pass and loss</span>
+</span><span data-line="33">      <span class="n">y_hat</span> <span class="o">=</span> <span class="n">wine_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span data-line="34">      <span class="n">loss</span> <span class="o">=</span> <span class="n">lossfun</span><span class="p">(</span><span class="n">y_hat</span> <span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</span><span data-line="35">
+</span><span data-line="36">      <span class="c1"># backprop</span>
+</span><span data-line="37">      <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+</span><span data-line="38">      <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</span><span data-line="39">      <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</span><span data-line="40">
+</span><span data-line="41">      <span class="c1"># loss from this batch</span>
+</span><span data-line="42">      <span class="n">batch_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+</span><span data-line="43">
+</span><span data-line="44">      <span class="c1"># compute training accuracy for this batch</span>
+</span><span data-line="45">      <span class="n">batch_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(((</span><span class="n">y_hat</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="p">)</span>
+</span><span data-line="46">    <span class="c1"># end of batch loop...</span>
+</span><span data-line="47">
+</span><span data-line="48">    <span class="c1"># now that we&#39;ve trained through the batches, get their average training accuracy</span>
+</span><span data-line="49">    <span class="n">train_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">batch_accuracies</span><span class="p">)</span> <span class="p">)</span>
+</span><span data-line="50">
+</span><span data-line="51">    <span class="c1"># and get average losses across the batches</span>
+</span><span data-line="52">    <span class="n">losses</span><span class="p">[</span><span class="n">epochi</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">batch_losses</span><span class="p">)</span>
+</span><span data-line="53">
+</span><span data-line="54">    <span class="c1"># test accuracy</span>
+</span><span data-line="55">    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">test_loader</span><span class="p">))</span> <span class="c1"># extract X, y from test dataloader</span>
+</span><span data-line="56">    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span> <span class="c1"># deactivates autograd</span>
+</span><span data-line="57">      <span class="n">y_hat</span> <span class="o">=</span> <span class="n">wine_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span data-line="58">    <span class="n">test_accuracies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(((</span><span class="n">y_hat</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="p">)</span>
+</span><span data-line="59">
+</span><span data-line="60">  <span class="c1"># function output</span>
+</span><span data-line="61">  <span class="k">return</span> <span class="n">train_accuracies</span><span class="p">,</span> <span class="n">test_accuracies</span><span class="p">,</span> <span class="n">losses</span>
+</span></pre></div>
+</div>
+</section>
+<section id="train-the-model">
+<h2>Train the model<a class="headerlink" href="#train-the-model" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">wine_net</span> <span class="o">=</span> <span class="n">WineNet</span><span class="p">()</span>
+</span><span data-line="2"><span class="n">train_accuracies</span><span class="p">,</span> <span class="n">test_accuracies</span><span class="p">,</span> <span class="n">losses</span> <span class="o">=</span> <span class="n">train_the_model</span><span class="p">(</span>
+</span><span data-line="3">  <span class="n">wine_net</span><span class="p">,</span>
+</span><span data-line="4">  <span class="n">train_loader</span><span class="p">,</span>
+</span><span data-line="5">  <span class="n">test_loader</span><span class="p">,</span>
+</span><span data-line="6">  <span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="compute-the-accuracy-precision-recall-and-f1-score-on-the-train-and-test-sets">
+<h2>Compute the accuracy, precision, recall, and F1 score on the train and test sets<a class="headerlink" href="#compute-the-accuracy-precision-recall-and-f1-score-on-the-train-and-test-sets" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">train_predictions</span> <span class="o">=</span> <span class="n">wine_net</span><span class="p">(</span><span class="n">train_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="2"><span class="n">test_predictions</span> <span class="o">=</span> <span class="n">wine_net</span><span class="p">(</span><span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="3"><span class="n">test_predictions</span>
+</span></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">tensor([[-1.1687e+01],
+</span><span data-line="2">        [ 3.0081e+00],
+</span><span data-line="3">        [-7.0877e+00],
+</span><span data-line="4">        [ 1.0964e+00],
+</span><span data-line="5">        [-2.5252e+00],
+</span><span data-line="6">        [ 3.4451e+00],
+</span><span data-line="7">        [-6.4569e+00],
+</span><span data-line="8">        [ 8.0725e+00],
+</span><span data-line="9">        [ 2.4752e+00],
+</span><span data-line="10">        [ 2.0515e+00],
+</span><span data-line="11">        [-3.9748e+00],
+</span><span data-line="12">        [ 7.9013e-01],
+</span><span data-line="13">        [ 2.6517e+00],
+</span><span data-line="14">        [ 3.4395e+00],
+</span><span data-line="15">        [ 5.7601e+00],
+</span><span data-line="16">        [ 6.2797e+00],
+</span><span data-line="17">        [-7.2085e+00],
+</span><span data-line="18">        [ 3.4561e+00],
+</span><span data-line="19">        [-2.9475e+00],
+</span><span data-line="20">        [ 1.0099e+00],
+</span><span data-line="21">        [-8.3859e-01],
+</span><span data-line="22">        [ 9.9582e+00],
+</span><span data-line="23">        [-1.2056e+00],
+</span><span data-line="24">        [-2.8718e+00],
+</span><span data-line="25">        [ 3.6574e-01],
+</span><span data-line="26">        [ 1.7433e+00],
+</span><span data-line="27">        [-5.6318e+00],
+</span><span data-line="28">        [ 4.0833e-01],
+</span><span data-line="29">        [ 7.2878e+00],
+</span><span data-line="30">        [ 8.0934e-01],
+</span><span data-line="31">        [ 3.0906e+00],
+</span><span data-line="32">        [-8.3292e-03],
+</span><span data-line="33">        [-9.2356e-01],
+</span><span data-line="34">        [ 4.4064e+00],
+</span><span data-line="35">        [-7.2041e-01],
+</span><span data-line="36">        [ 2.7370e+00],
+</span><span data-line="37">        [ 2.5889e+00],
+</span><span data-line="38">        [ 8.5471e-01],
+</span><span data-line="39">        [ 3.0517e+00],
+</span><span data-line="40">        [ 2.4752e+00],
+</span><span data-line="41">        [ 6.1741e+00],
+</span><span data-line="42">        [ 3.8722e+00],
+</span><span data-line="43">        [-4.2024e+00],
+</span><span data-line="44">        [-7.5761e-01],
+</span><span data-line="45">        [-1.2977e+00],
+</span><span data-line="46">        [-2.1738e+00],
+</span><span data-line="47">        [-6.1513e-01],
+</span><span data-line="48">        [ 1.7323e+00],
+</span><span data-line="49">        [-4.9373e+00],
+</span><span data-line="50">        [-8.3652e-01],
+</span><span data-line="51">        [ 3.7946e+00],
+</span><span data-line="52">        [ 4.2757e+00],
+</span><span data-line="53">        [ 8.1717e-01],
+</span><span data-line="54">        [ 1.3514e+00],
+</span><span data-line="55">        [ 2.1684e-01],
+</span><span data-line="56">        [ 3.0785e+00],
+</span><span data-line="57">        [-1.1543e-01],
+</span><span data-line="58">        [-4.0815e+00],
+</span><span data-line="59">        [-4.9185e+00],
+</span><span data-line="60">        [-1.0774e+00],
+</span><span data-line="61">        [ 3.1932e-01],
+</span><span data-line="62">        [-5.5150e-01],
+</span><span data-line="63">        [ 8.7100e+00],
+</span><span data-line="64">        [-5.2557e+00],
+</span><span data-line="65">        [-8.5434e+00],
+</span><span data-line="66">        [-3.8727e+00],
+</span><span data-line="67">        [ 1.8327e+00],
+</span><span data-line="68">        [-8.4136e+00],
+</span><span data-line="69">        [-7.5064e+00],
+</span><span data-line="70">        [ 1.5162e+00],
+</span><span data-line="71">        [ 3.0306e+00],
+</span><span data-line="72">        [-4.6184e+00],
+</span><span data-line="73">        [ 2.6542e+00],
+</span><span data-line="74">        [-2.8718e+00],
+</span><span data-line="75">        [ 5.5115e+00],
+</span><span data-line="76">        [-1.3152e+00],
+</span><span data-line="77">        [-5.0644e+00],
+</span><span data-line="78">        [ 3.4047e+00],
+</span><span data-line="79">        [ 6.1800e+00],
+</span><span data-line="80">        [ 7.9200e+00],
+</span><span data-line="81">        [ 3.6670e+00],
+</span><span data-line="82">        [ 1.8289e+00],
+</span><span data-line="83">        [ 7.7576e-01],
+</span><span data-line="84">        [ 2.4945e+00],
+</span><span data-line="85">        [-1.7518e-01],
+</span><span data-line="86">        [-1.0107e+01],
+</span><span data-line="87">        [-9.6352e+00],
+</span><span data-line="88">        [-1.1763e+00],
+</span><span data-line="89">        [-3.2802e+00],
+</span><span data-line="90">        [ 2.1862e+00],
+</span><span data-line="91">        [-4.3513e+00],
+</span><span data-line="92">        [ 6.9389e+00],
+</span><span data-line="93">        [ 9.3273e-01],
+</span><span data-line="94">        [-3.5958e+00],
+</span><span data-line="95">        [-1.2071e+01],
+</span><span data-line="96">        [-7.3259e+00],
+</span><span data-line="97">        [-1.1648e+01],
+</span><span data-line="98">        [ 7.3712e+00],
+</span><span data-line="99">        [ 5.0427e+00],
+</span><span data-line="100">        [ 2.6951e+00],
+</span><span data-line="101">        [ 6.1800e+00],
+</span><span data-line="102">        [ 1.5390e+00],
+</span><span data-line="103">        [ 3.4853e+00],
+</span><span data-line="104">        [ 4.4101e+00],
+</span><span data-line="105">        [ 1.0133e+00],
+</span><span data-line="106">        [-1.3858e+00],
+</span><span data-line="107">        [-2.1738e+00],
+</span><span data-line="108">        [-2.3336e+00],
+</span><span data-line="109">        [ 2.5590e+00],
+</span><span data-line="110">        [ 2.1414e+00],
+</span><span data-line="111">        [-3.4855e-01],
+</span><span data-line="112">        [ 2.4237e+00],
+</span><span data-line="113">        [ 4.6765e+00],
+</span><span data-line="114">        [-7.1353e+00],
+</span><span data-line="115">        [ 4.1111e+00],
+</span><span data-line="116">        [ 6.1800e+00],
+</span><span data-line="117">        [ 5.2344e+00],
+</span><span data-line="118">        [ 1.3255e+01],
+</span><span data-line="119">        [ 4.0609e+00],
+</span><span data-line="120">        [-7.3619e+00],
+</span><span data-line="121">        [ 6.5135e+00],
+</span><span data-line="122">        [-4.4960e+00],
+</span><span data-line="123">        [ 3.4303e+00],
+</span><span data-line="124">        [ 5.8993e+00],
+</span><span data-line="125">        [-2.8042e-01],
+</span><span data-line="126">        [ 1.3613e+00],
+</span><span data-line="127">        [ 9.7761e-01],
+</span><span data-line="128">        [ 2.1751e-01],
+</span><span data-line="129">        [ 2.3068e+00],
+</span><span data-line="130">        [-4.2121e+00],
+</span><span data-line="131">        [-2.6415e+00],
+</span><span data-line="132">        [ 2.5991e-01],
+</span><span data-line="133">        [-6.7101e+00],
+</span><span data-line="134">        [-6.5558e-02],
+</span><span data-line="135">        [-1.9022e+00],
+</span><span data-line="136">        [ 4.9063e+00],
+</span><span data-line="137">        [-9.5740e-01],
+</span><span data-line="138">        [ 1.7841e+00],
+</span><span data-line="139">        [-4.1111e-01],
+</span><span data-line="140">        [-5.0551e+00],
+</span><span data-line="141">        [-1.2090e+00],
+</span><span data-line="142">        [ 6.7526e+00],
+</span><span data-line="143">        [-4.1278e-01],
+</span><span data-line="144">        [-2.1164e+00],
+</span><span data-line="145">        [ 4.7043e+00],
+</span><span data-line="146">        [-6.6553e-01],
+</span><span data-line="147">        [-1.1898e+00],
+</span><span data-line="148">        [ 4.0101e-01],
+</span><span data-line="149">        [ 6.9641e+00],
+</span><span data-line="150">        [ 4.7756e+00],
+</span><span data-line="151">        [ 4.6142e+00],
+</span><span data-line="152">        [-7.7287e+00],
+</span><span data-line="153">        [ 1.2003e+00],
+</span><span data-line="154">        [ 1.2124e+00],
+</span><span data-line="155">        [ 2.4130e+00],
+</span><span data-line="156">        [ 2.2275e-02],
+</span><span data-line="157">        [ 3.7997e+00],
+</span><span data-line="158">        [-7.5459e-01],
+</span><span data-line="159">        [-2.3010e+00],
+</span><span data-line="160">        [ 2.1218e+00]], grad_fn=&lt;AddmmBackward0&gt;)
+</span></pre></div>
+</div>
+</section>
+<section id="use-scikit-learn-to-compute-the-metrics">
+<h2>Use Scikit Learn to compute the metrics<a class="headerlink" href="#use-scikit-learn-to-compute-the-metrics" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+</span><span data-line="2">  <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">f1_score</span><span class="p">,</span> <span class="n">confusion_matrix</span>
+</span><span data-line="3">  <span class="p">)</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="c1"># initialize a dictionary to store the metrics</span>
+</span><span data-line="6"><span class="n">train_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</span><span data-line="7"><span class="n">test_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="c1"># compute the metrics on the train set</span>
+</span><span data-line="10"><span class="n">true_labels</span> <span class="o">=</span> <span class="n">train_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="11"><span class="n">train_predictions</span> <span class="o">=</span> <span class="n">train_predictions</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span data-line="12"><span class="n">train_metrics</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">)</span>
+</span><span data-line="13"><span class="n">train_metrics</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">)</span>
+</span><span data-line="14"><span class="n">train_metrics</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">)</span>
+</span><span data-line="15"><span class="n">train_metrics</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">train_predictions</span><span class="p">)</span>
+</span><span data-line="16">
+</span><span data-line="17"><span class="c1"># compute the metrics on the test set</span>
+</span><span data-line="18"><span class="n">true_labels</span> <span class="o">=</span> <span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="19"><span class="n">test_predictions</span> <span class="o">=</span> <span class="n">test_predictions</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</span><span data-line="20"><span class="n">test_metrics</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">accuracy_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+</span><span data-line="21"><span class="n">test_metrics</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+</span><span data-line="22"><span class="n">test_metrics</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">recall_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+</span><span data-line="23"><span class="n">test_metrics</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">f1_score</span><span class="p">(</span><span class="n">true_labels</span><span class="p">,</span> <span class="n">test_predictions</span><span class="p">)</span>
+</span><span data-line="24"><span class="nb">print</span><span class="p">(</span><span class="n">train_metrics</span><span class="p">,</span> <span class="n">test_metrics</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">[0.9081419624217119, 0.9069767441860465, 0.9212598425196851, 0.9140625] [0.775, 0.8021978021978022, 0.8021978021978022, 0.8021978021978022]
+</span></pre></div>
+</div>
+</section>
+<section id="plot-the-metrics">
+<h2>Plot the metrics<a class="headerlink" href="#plot-the-metrics" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+</span><span data-line="2"><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+</span><span data-line="3"><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">-</span><span class="mf">.1</span><span class="p">,</span> <span class="n">train_metrics</span><span class="p">,</span> <span class="mf">.5</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">+</span><span class="mf">.1</span><span class="p">,</span> <span class="n">test_metrics</span><span class="p">,</span> <span class="mf">.5</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">,</span><span class="s1">&#39;Precision&#39;</span><span class="p">,</span><span class="s1">&#39;Recall&#39;</span><span class="p">,</span><span class="s1">&#39;F1-score&#39;</span><span class="p">])</span>
+</span><span data-line="6"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">.6</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</span><span data-line="7"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;Train&#39;</span><span class="p">,</span><span class="s1">&#39;Test&#39;</span><span class="p">])</span>
+</span><span data-line="8"><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Performance metrics&#39;</span><span class="p">)</span>
+</span><span data-line="9"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_arfp_wine_001.png" srcset="../../_images/sphx_glr_plot_arfp_wine_001.png" alt="Performance metrics" class = "sphx-glr-single-img"/></section>
+<section id="show-the-confusion-matrices">
+<h2>Show the confusion matrices<a class="headerlink" href="#show-the-confusion-matrices" title="Link to this heading">¶</a></h2>
+<p>Confusion matrices</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">true_labels_train</span> <span class="o">=</span> <span class="n">train_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="2"><span class="n">true_labels_test</span> <span class="o">=</span> <span class="n">test_loader</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">tensors</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</span><span data-line="3"><span class="n">train_conf</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">true_labels_train</span><span class="p">,</span> <span class="n">train_predictions</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">test_conf</span>  <span class="o">=</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">true_labels_test</span><span class="p">,</span> <span class="n">test_predictions</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="n">sns</span><span class="o">.</span><span class="n">set_style</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+</span><span data-line="7"><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="c1"># confmat during TRAIN</span>
+</span><span data-line="10"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">train_conf</span><span class="p">,</span> <span class="s1">&#39;Blues&#39;</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train_predictions</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="11"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</span><span data-line="12"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</span><span data-line="13"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span><span class="s1">&#39;good&#39;</span><span class="p">])</span>
+</span><span data-line="14"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span><span class="s1">&#39;good&#39;</span><span class="p">])</span>
+</span><span data-line="15"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Predicted quality&#39;</span><span class="p">)</span>
+</span><span data-line="16"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;True quality&#39;</span><span class="p">)</span>
+</span><span data-line="17"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;TRAIN confusion matrix&#39;</span><span class="p">)</span>
+</span><span data-line="18">
+</span><span data-line="19"><span class="c1"># add text labels</span>
+</span><span data-line="20"><span class="n">text_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+</span><span data-line="21"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;True negatives:</span><span class="se">\n</span><span class="si">{</span><span class="n">train_conf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="22"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;False negatives:</span><span class="se">\n</span><span class="si">{</span><span class="n">train_conf</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="23"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;True positives:</span><span class="se">\n</span><span class="si">{</span><span class="n">train_conf</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="24"><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;False positives:</span><span class="se">\n</span><span class="si">{</span><span class="n">train_conf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="25">
+</span><span data-line="26"><span class="c1"># confmat during TEST</span>
+</span><span data-line="27"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">test_conf</span><span class="p">,</span><span class="s1">&#39;Blues&#39;</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">test_predictions</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</span><span data-line="28"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</span><span data-line="29"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+</span><span data-line="30"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span><span class="s1">&#39;good&#39;</span><span class="p">])</span>
+</span><span data-line="31"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;bad&#39;</span><span class="p">,</span><span class="s1">&#39;good&#39;</span><span class="p">])</span>
+</span><span data-line="32"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Predicted quality&#39;</span><span class="p">)</span>
+</span><span data-line="33"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;True quality&#39;</span><span class="p">)</span>
+</span><span data-line="34"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;TEST confusion matrix&#39;</span><span class="p">)</span>
+</span><span data-line="35">
+</span><span data-line="36"><span class="c1"># add text labels</span>
+</span><span data-line="37"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;True negatives:</span><span class="se">\n</span><span class="si">{</span><span class="n">test_conf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="38"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;False negatives:</span><span class="se">\n</span><span class="si">{</span><span class="n">test_conf</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="39"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;True positives:</span><span class="se">\n</span><span class="si">{</span><span class="n">test_conf</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="40"><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="sa">f</span><span class="s1">&#39;False positives:</span><span class="se">\n</span><span class="si">{</span><span class="n">test_conf</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">text_kwargs</span><span class="p">)</span>
+</span><span data-line="41"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_arfp_wine_002.png" srcset="../../_images/sphx_glr_plot_arfp_wine_002.png" alt="TRAIN confusion matrix, TEST confusion matrix" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (7 minutes 22.625 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-deep-learning-plot-arfp-wine-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/da271f440f88917f72f3a856804ae005/plot_arfp_wine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_arfp_wine.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/33b96e0dbd4193cdca46023da4510aea/plot_arfp_wine.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_arfp_wine.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/2344e33a74caff121083376ada73ae3d/plot_arfp_wine.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_arfp_wine.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="plot_accuracy_precision_recall.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Accuracy, precision, and recall</div></div>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Scott Huberty</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/scott-huberty" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a>
+<a href="https://www.linkedin.com/in/scott-h-40113b1a2/" aria-label="LinkedIn">
+  <iconify-icon icon="simple-icons:linkedin"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/thebelab-helper.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../_static/shibuya.js?v=55e26b35"></script></body>
+</html>

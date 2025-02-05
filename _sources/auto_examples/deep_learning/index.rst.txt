@@ -32,6 +32,23 @@ neural networks, using the PyTorch framework.
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Let&#x27;s practice computing the accuracy, precision, recall, and F1 score on the Wine dataset. We&#x27;ll also use Scikit Learn to compute these metrics for us.">
+
+.. only:: html
+
+  .. image:: /auto_examples/deep_learning/images/thumb/sphx_glr_plot_arfp_wine_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_deep_learning_plot_arfp_wine.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -43,4 +60,5 @@ neural networks, using the PyTorch framework.
    :hidden:
 
    /auto_examples/deep_learning/plot_accuracy_precision_recall
+   /auto_examples/deep_learning/plot_arfp_wine
 
