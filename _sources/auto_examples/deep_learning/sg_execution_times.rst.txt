@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**07:24.063** total execution time for 2 files **from auto_examples/deep_learning**:
+**02:27.714** total execution time for 2 files **from auto_examples/deep_learning**:
 
 .. container::
 
@@ -33,8 +33,8 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_deep_learning_plot_arfp_wine.py` (``plot_arfp_wine.py``)
-     - 07:22.625
+     - 02:26.526
      - 0.0
    * - :ref:`sphx_glr_auto_examples_deep_learning_plot_accuracy_precision_recall.py` (``plot_accuracy_precision_recall.py``)
-     - 00:01.438
+     - 00:01.188
      - 0.0

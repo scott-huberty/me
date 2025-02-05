@@ -18,13 +18,12 @@
 .. _sphx_glr_auto_examples_deep_learning_plot_arfp_wine.py:
 
 
-Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset
-=================================================================
+Compute Accuracy, Precision, Recall, and F1 on the Wine dataset
+================================================================
 
-Let's practice computing the accuracy, precision, recall, and F1 score on the Wine dataset.
-We'll also use Scikit Learn to compute these metrics for us.
+We'll use Scikit Learn to compute these metrics for us.
 
-.. GENERATED FROM PYTHON SOURCE LINES 11-28
+.. GENERATED FROM PYTHON SOURCE LINES 10-29
 
 .. code-block:: Python
 
@@ -32,6 +31,9 @@ We'll also use Scikit Learn to compute these metrics for us.
     import torch.nn as nn
     import torch.nn.functional as F
     from torch.utils.data import DataLoader
+    from sklearn.metrics import (
+      accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+      )
     from sklearn.model_selection import train_test_split
 
     # for number-crunching
@@ -42,7 +44,6 @@ We'll also use Scikit Learn to compute these metrics for us.
 
     # for data visualization
     import matplotlib.pyplot as plt
-    import matplotlib_inline.backend_inline
     import seaborn as sns
 
 
@@ -52,16 +53,13 @@ We'll also use Scikit Learn to compute these metrics for us.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 29-35
+.. GENERATED FROM PYTHON SOURCE LINES 30-33
 
 Load the Wine dataset
 ---------------------
 We'll use the Wine dataset from the UCI Machine Learning Repository.
-The dataset has 178 samples with 13 features each.
-The features are chemical properties of the wines.
-The target variable is the wine class (1, 2, or 3).
 
-.. GENERATED FROM PYTHON SOURCE LINES 37-59
+.. GENERATED FROM PYTHON SOURCE LINES 35-57
 
 .. code-block:: Python
 
@@ -107,13 +105,13 @@ The target variable is the wine class (1, 2, or 3).
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 60-63
+.. GENERATED FROM PYTHON SOURCE LINES 58-61
 
 Convert to torch tensors
 ------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 65-71
+.. GENERATED FROM PYTHON SOURCE LINES 63-69
 
 .. code-block:: Python
 
@@ -121,7 +119,7 @@ Convert to torch tensors
         [col for col in df.columns if col not in ["quality", "good_quality"]]
     ).to_torch().float()
     labels_tensor = df.select("good_quality").to_torch().float()
-    print(train_tensor.shape, labels_tensor.shape)
+    print(f"train_tensor shape: {train_tensor.shape}", f"labels_tensor shape: {labels_tensor.shape}")
 
 
 
@@ -131,18 +129,18 @@ Convert to torch tensors
 
  .. code-block:: none
 
-    torch.Size([1597, 11]) torch.Size([1597, 1])
+    train_tensor shape: torch.Size([1597, 11]) labels_tensor shape: torch.Size([1597, 1])
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 72-75
+.. GENERATED FROM PYTHON SOURCE LINES 70-73
 
 Split the data
 --------------
-We'll plit the data into training and testing sets using Scikit Learn
 
-.. GENERATED FROM PYTHON SOURCE LINES 77-87
+
+.. GENERATED FROM PYTHON SOURCE LINES 75-85
 
 .. code-block:: Python
 
@@ -163,13 +161,13 @@ We'll plit the data into training and testing sets using Scikit Learn
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 88-91
+.. GENERATED FROM PYTHON SOURCE LINES 86-89
 
 Define the model
 ----------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 93-114
+.. GENERATED FROM PYTHON SOURCE LINES 91-112
 
 .. code-block:: Python
 
@@ -201,62 +199,49 @@ Define the model
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 115-118
+.. GENERATED FROM PYTHON SOURCE LINES 113-116
 
-Define a function to train the model
+Train the model
 ------------------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 120-182
+.. GENERATED FROM PYTHON SOURCE LINES 118-165
 
 .. code-block:: Python
 
-    def train_the_model(
-        wine_net,
-        train_loader,
-        test_loader,
-        num_epochs=1_000,
-        ):
-      """Train the model on the Wine dataset.
+    wine_net = WineNet()
+    num_epochs = 500
+    # loss function and optimizer
+    lossfun = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.SGD(wine_net.parameters(), lr=.01)
 
-      Parameters
-      ----------
-      wine_net : WineNet
-        The neural network model defined above
-      num_epochs : int
-        The number of epochs to train the model
-      """
-      # loss function and optimizer
-      lossfun = nn.BCEWithLogitsLoss()
-      optimizer = torch.optim.SGD(wine_net.parameters(),lr=.01)
+    # initialize losses
+    losses   = torch.zeros(num_epochs)
+    train_accuracies = []
+    test_accuracies  = []
 
-      # initialize losses
-      losses   = torch.zeros(num_epochs)
-      train_accuracies = []
-      test_accuracies  = []
-
-      # loop over epochs
-      for epochi in range(num_epochs):
-
+    # loop over epochs
+    for epochi in range(num_epochs):
         # loop over training data batches
         batch_accuracies  = []
         batch_losses = []
         for x, y in train_loader:
-          # forward pass and loss
-          y_hat = wine_net(x)
-          loss = lossfun(y_hat , y)
+            # forward pass and loss
+            y_hat = wine_net(x)
+            loss = lossfun(y_hat , y)
 
-          # backprop
-          optimizer.zero_grad()
-          loss.backward()
-          optimizer.step()
+            # backprop
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
 
-          # loss from this batch
-          batch_losses.append(loss.item())
+            # loss from this batch
+            batch_losses.append(loss.item())
 
-          # compute training accuracy for this batch
-          batch_accuracies.append( 100 * torch.mean(((y_hat > 0) == y).float()).item() )
-        # end of batch loop...
+            # compute training accuracy for this batch
+            accuracy = 100 * torch.mean(((y_hat > 0) == y).float()).item()
+            batch_accuracies.append(accuracy)
+            # end of batch loop...
 
         # now that we've trained through the batches, get their average training accuracy
         train_accuracies.append( np.mean(batch_accuracies) )
@@ -267,11 +252,9 @@ Define a function to train the model
         # test accuracy
         x, y = next(iter(test_loader)) # extract X, y from test dataloader
         with torch.no_grad(): # deactivates autograd
-          y_hat = wine_net(x)
-        test_accuracies.append( 100 * torch.mean(((y_hat > 0) == y).float()).item() )
-  
-      # function output
-      return train_accuracies, test_accuracies, losses
+            y_hat = wine_net(x)
+            test_acc = 100 * torch.mean(((y_hat > 0) == y).float()).item()
+            test_accuracies.append(test_acc)
 
 
 
@@ -280,229 +263,18 @@ Define a function to train the model
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 183-186
-
-Train the model
----------------
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 188-195
-
-.. code-block:: Python
-
-    wine_net = WineNet()
-    train_accuracies, test_accuracies, losses = train_the_model(
-      wine_net,
-      train_loader,
-      test_loader,
-      )
-
-
-
-
-
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 196-199
+.. GENERATED FROM PYTHON SOURCE LINES 166-169
 
 Compute the accuracy, precision, recall, and F1 score on the train and test sets
 ----------------------------------------------------------------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 201-205
+.. GENERATED FROM PYTHON SOURCE LINES 171-197
 
 .. code-block:: Python
 
     train_predictions = wine_net(train_loader.dataset.tensors[0])
     test_predictions = wine_net(test_loader.dataset.tensors[0])
-    test_predictions
-
-
-
-
-
-.. rst-class:: sphx-glr-script-out
-
- .. code-block:: none
-
-
-    tensor([[-1.1687e+01],
-            [ 3.0081e+00],
-            [-7.0877e+00],
-            [ 1.0964e+00],
-            [-2.5252e+00],
-            [ 3.4451e+00],
-            [-6.4569e+00],
-            [ 8.0725e+00],
-            [ 2.4752e+00],
-            [ 2.0515e+00],
-            [-3.9748e+00],
-            [ 7.9013e-01],
-            [ 2.6517e+00],
-            [ 3.4395e+00],
-            [ 5.7601e+00],
-            [ 6.2797e+00],
-            [-7.2085e+00],
-            [ 3.4561e+00],
-            [-2.9475e+00],
-            [ 1.0099e+00],
-            [-8.3859e-01],
-            [ 9.9582e+00],
-            [-1.2056e+00],
-            [-2.8718e+00],
-            [ 3.6574e-01],
-            [ 1.7433e+00],
-            [-5.6318e+00],
-            [ 4.0833e-01],
-            [ 7.2878e+00],
-            [ 8.0934e-01],
-            [ 3.0906e+00],
-            [-8.3292e-03],
-            [-9.2356e-01],
-            [ 4.4064e+00],
-            [-7.2041e-01],
-            [ 2.7370e+00],
-            [ 2.5889e+00],
-            [ 8.5471e-01],
-            [ 3.0517e+00],
-            [ 2.4752e+00],
-            [ 6.1741e+00],
-            [ 3.8722e+00],
-            [-4.2024e+00],
-            [-7.5761e-01],
-            [-1.2977e+00],
-            [-2.1738e+00],
-            [-6.1513e-01],
-            [ 1.7323e+00],
-            [-4.9373e+00],
-            [-8.3652e-01],
-            [ 3.7946e+00],
-            [ 4.2757e+00],
-            [ 8.1717e-01],
-            [ 1.3514e+00],
-            [ 2.1684e-01],
-            [ 3.0785e+00],
-            [-1.1543e-01],
-            [-4.0815e+00],
-            [-4.9185e+00],
-            [-1.0774e+00],
-            [ 3.1932e-01],
-            [-5.5150e-01],
-            [ 8.7100e+00],
-            [-5.2557e+00],
-            [-8.5434e+00],
-            [-3.8727e+00],
-            [ 1.8327e+00],
-            [-8.4136e+00],
-            [-7.5064e+00],
-            [ 1.5162e+00],
-            [ 3.0306e+00],
-            [-4.6184e+00],
-            [ 2.6542e+00],
-            [-2.8718e+00],
-            [ 5.5115e+00],
-            [-1.3152e+00],
-            [-5.0644e+00],
-            [ 3.4047e+00],
-            [ 6.1800e+00],
-            [ 7.9200e+00],
-            [ 3.6670e+00],
-            [ 1.8289e+00],
-            [ 7.7576e-01],
-            [ 2.4945e+00],
-            [-1.7518e-01],
-            [-1.0107e+01],
-            [-9.6352e+00],
-            [-1.1763e+00],
-            [-3.2802e+00],
-            [ 2.1862e+00],
-            [-4.3513e+00],
-            [ 6.9389e+00],
-            [ 9.3273e-01],
-            [-3.5958e+00],
-            [-1.2071e+01],
-            [-7.3259e+00],
-            [-1.1648e+01],
-            [ 7.3712e+00],
-            [ 5.0427e+00],
-            [ 2.6951e+00],
-            [ 6.1800e+00],
-            [ 1.5390e+00],
-            [ 3.4853e+00],
-            [ 4.4101e+00],
-            [ 1.0133e+00],
-            [-1.3858e+00],
-            [-2.1738e+00],
-            [-2.3336e+00],
-            [ 2.5590e+00],
-            [ 2.1414e+00],
-            [-3.4855e-01],
-            [ 2.4237e+00],
-            [ 4.6765e+00],
-            [-7.1353e+00],
-            [ 4.1111e+00],
-            [ 6.1800e+00],
-            [ 5.2344e+00],
-            [ 1.3255e+01],
-            [ 4.0609e+00],
-            [-7.3619e+00],
-            [ 6.5135e+00],
-            [-4.4960e+00],
-            [ 3.4303e+00],
-            [ 5.8993e+00],
-            [-2.8042e-01],
-            [ 1.3613e+00],
-            [ 9.7761e-01],
-            [ 2.1751e-01],
-            [ 2.3068e+00],
-            [-4.2121e+00],
-            [-2.6415e+00],
-            [ 2.5991e-01],
-            [-6.7101e+00],
-            [-6.5558e-02],
-            [-1.9022e+00],
-            [ 4.9063e+00],
-            [-9.5740e-01],
-            [ 1.7841e+00],
-            [-4.1111e-01],
-            [-5.0551e+00],
-            [-1.2090e+00],
-            [ 6.7526e+00],
-            [-4.1278e-01],
-            [-2.1164e+00],
-            [ 4.7043e+00],
-            [-6.6553e-01],
-            [-1.1898e+00],
-            [ 4.0101e-01],
-            [ 6.9641e+00],
-            [ 4.7756e+00],
-            [ 4.6142e+00],
-            [-7.7287e+00],
-            [ 1.2003e+00],
-            [ 1.2124e+00],
-            [ 2.4130e+00],
-            [ 2.2275e-02],
-            [ 3.7997e+00],
-            [-7.5459e-01],
-            [-2.3010e+00],
-            [ 2.1218e+00]], grad_fn=<AddmmBackward0>)
-
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 206-209
-
-Use Scikit Learn to compute the metrics
----------------------------------------
-
-
-.. GENERATED FROM PYTHON SOURCE LINES 211-236
-
-.. code-block:: Python
-
-    from sklearn.metrics import (
-      accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-      )
 
     # initialize a dictionary to store the metrics
     train_metrics = [0, 0, 0, 0]
@@ -523,7 +295,9 @@ Use Scikit Learn to compute the metrics
     test_metrics[1] = precision_score(true_labels, test_predictions)
     test_metrics[2] = recall_score(true_labels, test_predictions)
     test_metrics[3] = f1_score(true_labels, test_predictions)
-    print(train_metrics, test_metrics)
+    for i, metric in enumerate(['Accuracy', 'Precision', 'Recall', 'F1-score']):
+        print(f'{metric} (train): {train_metrics[i]:.2f}')
+        print(f'{metric} (test): {test_metrics[i]:.2f}')
 
 
 
@@ -533,28 +307,36 @@ Use Scikit Learn to compute the metrics
 
  .. code-block:: none
 
-    [0.9081419624217119, 0.9069767441860465, 0.9212598425196851, 0.9140625] [0.775, 0.8021978021978022, 0.8021978021978022, 0.8021978021978022]
+    Accuracy (train): 0.83
+    Accuracy (test): 0.80
+    Precision (train): 0.84
+    Precision (test): 0.81
+    Recall (train): 0.84
+    Recall (test): 0.81
+    F1-score (train): 0.84
+    F1-score (test): 0.81
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 237-240
+.. GENERATED FROM PYTHON SOURCE LINES 198-201
 
 Plot the metrics
 ----------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 242-252
+.. GENERATED FROM PYTHON SOURCE LINES 203-214
 
 .. code-block:: Python
 
     sns.set_style("darkgrid")
     fig, ax = plt.subplots()
+
     ax.bar(np.arange(4) -.1, train_metrics, .5)
     ax.bar(np.arange(4) +.1, test_metrics, .5)
-    ax.set_xticks([0,1,2,3],['Accuracy','Precision','Recall','F1-score'])
+    ax.set_xticks([0, 1, 2, 3], ['Accuracy', 'Precision', 'Recall', 'F1-score'])
     ax.set_ylim([.6,1])
-    ax.legend(['Train','Test'])
+    ax.legend(['Train', 'Test'])
     ax.set_title('Performance metrics')
     plt.show()
 
@@ -570,17 +352,17 @@ Plot the metrics
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 253-256
+.. GENERATED FROM PYTHON SOURCE LINES 215-218
 
 Show the confusion matrices
 ---------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 258-259
+.. GENERATED FROM PYTHON SOURCE LINES 220-221
 
 Confusion matrices
 
-.. GENERATED FROM PYTHON SOURCE LINES 259-299
+.. GENERATED FROM PYTHON SOURCE LINES 221-261
 
 .. code-block:: Python
 
@@ -590,9 +372,9 @@ Confusion matrices
     test_conf  = confusion_matrix(true_labels_test, test_predictions>0)
 
     sns.set_style('white')
-    fig, axes = plt.subplots(1,2,figsize=(10,4))
+    fig, axes = plt.subplots(1, 2, figsize=(10,4))
 
-    # confmat during TRAIN
+    # Confusion Matrix (train)
     axes[0].imshow(train_conf, 'Blues', vmax=len(train_predictions)/2)
     axes[0].set_xticks([0,1])
     axes[0].set_yticks([0,1])
@@ -604,13 +386,13 @@ Confusion matrices
 
     # add text labels
     text_kwargs = dict(ha='center', va='center')
-    axes[0].text(0,0,f'True negatives:\n{train_conf[0, 0]}' , **text_kwargs)
-    axes[0].text(0,1,f'False negatives:\n{train_conf[1, 0]}', **text_kwargs)
-    axes[0].text(1,1,f'True positives:\n{train_conf[1, 1]}' , **text_kwargs)
-    axes[0].text(1,0,f'False positives:\n{train_conf[0, 1]}', **text_kwargs)
+    axes[0].text(0, 0, f'True negatives:\n{train_conf[0, 0]}' , **text_kwargs)
+    axes[0].text(0, 1, f'False negatives:\n{train_conf[1, 0]}', **text_kwargs)
+    axes[0].text(1, 1, f'True positives:\n{train_conf[1, 1]}' , **text_kwargs)
+    axes[0].text(1, 0, f'False positives:\n{train_conf[0, 1]}', **text_kwargs)
 
-    # confmat during TEST
-    axes[1].imshow(test_conf,'Blues',vmax=len(test_predictions)/2)
+    # Confusion Matrix (test)
+    axes[1].imshow(test_conf, 'Blues', vmax=len(test_predictions)/2)
     axes[1].set_xticks([0,1])
     axes[1].set_yticks([0,1])
     axes[1].set_xticklabels(['bad','good'])
@@ -620,10 +402,10 @@ Confusion matrices
     axes[1].set_title('TEST confusion matrix')
 
     # add text labels
-    axes[1].text(0,0,f'True negatives:\n{test_conf[0,0]}', **text_kwargs)
-    axes[1].text(0,1,f'False negatives:\n{test_conf[1,0]}', **text_kwargs)
-    axes[1].text(1,1,f'True positives:\n{test_conf[1,1]}' , **text_kwargs)
-    axes[1].text(1,0,f'False positives:\n{test_conf[0,1]}', **text_kwargs)
+    axes[1].text(0, 0, f'True negatives:\n{test_conf[0,0]}', **text_kwargs)
+    axes[1].text(0, 1, f'False negatives:\n{test_conf[1,0]}', **text_kwargs)
+    axes[1].text(1, 1, f'True positives:\n{test_conf[1,1]}' , **text_kwargs)
+    axes[1].text(1, 0, f'False positives:\n{test_conf[0,1]}', **text_kwargs)
     plt.show()
 
 
@@ -639,7 +421,7 @@ Confusion matrices
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (7 minutes 22.625 seconds)
+   **Total running time of the script:** (2 minutes 26.526 seconds)
 
 
 .. _sphx_glr_download_auto_examples_deep_learning_plot_arfp_wine.py:

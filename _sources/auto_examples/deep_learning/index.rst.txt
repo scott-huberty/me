@@ -34,7 +34,7 @@ neural networks, using the PyTorch framework.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="Let&#x27;s practice computing the accuracy, precision, recall, and F1 score on the Wine dataset. We&#x27;ll also use Scikit Learn to compute these metrics for us.">
+    <div class="sphx-glr-thumbcontainer" tooltip="We&#x27;ll use Scikit Learn to compute these metrics for us.">
 
 .. only:: html
 
@@ -45,7 +45,7 @@ neural networks, using the PyTorch framework.
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Computer Accuracy, Precision, Recaall, and F1 on the Wine dataset</div>
+      <div class="sphx-glr-thumbnail-title">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</div>
     </div>
 
 
