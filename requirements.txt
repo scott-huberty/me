@@ -3,7 +3,9 @@ sphinx-gallery
 jupyter-sphinx
 sympy
 scikit-learn
+torch
 matplotlib
+polars
 seaborn
 ipython
 pooch
