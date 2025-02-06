@@ -173,7 +173,9 @@ to download the full example code.</p>
 </div>
 <section id="load-the-wine-dataset">
 <h2>Load the Wine dataset<a class="headerlink" href="#load-the-wine-dataset" title="Link to this heading">¶</a></h2>
-<p>We’ll use the Wine dataset from the UCI Machine Learning Repository.</p>
+<p>We’ll use the Wine dataset from the UCI Machine Learning Repository.
+We’ll create a new variable, “good_quality”. If the wine quality is greater than 5,
+we’ll set “good_quality” to 1 (True), otherwise we’ll set it to 0 (False).</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv&quot;</span>
 </span><span data-line="2"><span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">infer_schema_length</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e5</span><span class="p">))</span>
 </span><span data-line="3"><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col_name</span> <span class="p">:</span> <span class="n">col_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">))</span>
@@ -211,6 +213,8 @@ to download the full example code.</p>
 <br /></section>
 <section id="convert-to-torch-tensors">
 <h2>Convert to torch tensors<a class="headerlink" href="#convert-to-torch-tensors" title="Link to this heading">¶</a></h2>
+<p>Note that we pass all columns except “quality” and “good_quality” to the input tensor.
+The target tensor is the “good_quality” boolean variable column.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">train_tensor</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
 </span><span data-line="2">    <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">,</span> <span class="s2">&quot;good_quality&quot;</span><span class="p">]]</span>
 </span><span data-line="3"><span class="p">)</span><span class="o">.</span><span class="n">to_torch</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
@@ -238,22 +242,24 @@ to download the full example code.</p>
 </section>
 <section id="define-the-model">
 <h2>Define the model<a class="headerlink" href="#define-the-model" title="Link to this heading">¶</a></h2>
+<p>Note that we have 11 input features and 1 output feature (the target), which
+match the number of columns in <code class="docutils literal notranslate"><span class="pre">train_tensor</span></code> and <code class="docutils literal notranslate"><span class="pre">labels_tensor</span></code>, respectively.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="k">class</span><span class="w"> </span><span class="nc">WineNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 </span><span data-line="2">  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </span><span data-line="3">    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span><span data-line="4">
 </span><span data-line="5">    <span class="c1">### input layer</span>
-</span><span data-line="6">    <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span>
+</span><span data-line="6">    <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
 </span><span data-line="7">
 </span><span data-line="8">    <span class="c1">### hidden layers</span>
-</span><span data-line="9">    <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
-</span><span data-line="10">    <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">)</span>
+</span><span data-line="9">    <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+</span><span data-line="10">    <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
 </span><span data-line="11">
 </span><span data-line="12">    <span class="c1">### output layer</span>
-</span><span data-line="13">    <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</span><span data-line="13">    <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 </span><span data-line="14">
 </span><span data-line="15">  <span class="c1"># forward pass</span>
-</span><span data-line="16">  <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+</span><span data-line="16">  <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 </span><span data-line="17">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
 </span><span data-line="18">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
 </span><span data-line="19">    <span class="n">x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">)</span>
@@ -263,6 +269,8 @@ to download the full example code.</p>
 </section>
 <section id="train-the-model">
 <h2>Train the model<a class="headerlink" href="#train-the-model" title="Link to this heading">¶</a></h2>
+<p>We want to train the model to predict whether a wine is of good quality or not, based
+on the wine characteristics.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">wine_net</span> <span class="o">=</span> <span class="n">WineNet</span><span class="p">()</span>
 </span><span data-line="2"><span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">500</span>
 </span><span data-line="3"><span class="c1"># loss function and optimizer</span>
@@ -341,14 +349,14 @@ to download the full example code.</p>
 </span><span data-line="25">    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">metric</span><span class="si">}</span><span class="s1"> (test): </span><span class="si">{</span><span class="n">test_metrics</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </span></pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">Accuracy (train): 0.83
-</span><span data-line="2">Accuracy (test): 0.80
-</span><span data-line="3">Precision (train): 0.84
-</span><span data-line="4">Precision (test): 0.81
-</span><span data-line="5">Recall (train): 0.84
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">Accuracy (train): 0.82
+</span><span data-line="2">Accuracy (test): 0.74
+</span><span data-line="3">Precision (train): 0.83
+</span><span data-line="4">Precision (test): 0.72
+</span><span data-line="5">Recall (train): 0.83
 </span><span data-line="6">Recall (test): 0.81
-</span><span data-line="7">F1-score (train): 0.84
-</span><span data-line="8">F1-score (test): 0.81
+</span><span data-line="7">F1-score (train): 0.83
+</span><span data-line="8">F1-score (test): 0.76
 </span></pre></div>
 </div>
 </section>
@@ -413,7 +421,7 @@ to download the full example code.</p>
 </span><span data-line="41"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </span></pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_arfp_wine_002.png" srcset="../../_images/sphx_glr_plot_arfp_wine_002.png" alt="TRAIN confusion matrix, TEST confusion matrix" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 26.526 seconds)</p>
+<img src="../../_images/sphx_glr_plot_arfp_wine_002.png" srcset="../../_images/sphx_glr_plot_arfp_wine_002.png" alt="TRAIN confusion matrix, TEST confusion matrix" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 38.054 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-deep-learning-plot-arfp-wine-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/da271f440f88917f72f3a856804ae005/plot_arfp_wine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_arfp_wine.ipynb</span></code></a></p>

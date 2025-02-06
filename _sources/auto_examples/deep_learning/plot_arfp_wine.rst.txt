@@ -53,13 +53,15 @@ We'll use Scikit Learn to compute these metrics for us.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 30-33
+.. GENERATED FROM PYTHON SOURCE LINES 30-35
 
 Load the Wine dataset
 ---------------------
 We'll use the Wine dataset from the UCI Machine Learning Repository.
+We'll create a new variable, "good_quality". If the wine quality is greater than 5,
+we'll set "good_quality" to 1 (True), otherwise we'll set it to 0 (False).
 
-.. GENERATED FROM PYTHON SOURCE LINES 35-57
+.. GENERATED FROM PYTHON SOURCE LINES 37-59
 
 .. code-block:: Python
 
@@ -105,13 +107,15 @@ We'll use the Wine dataset from the UCI Machine Learning Repository.
     <br />
     <br />
 
-.. GENERATED FROM PYTHON SOURCE LINES 58-61
+.. GENERATED FROM PYTHON SOURCE LINES 60-65
 
 Convert to torch tensors
 ------------------------
 
+Note that we pass all columns except "quality" and "good_quality" to the input tensor.
+The target tensor is the "good_quality" boolean variable column.
 
-.. GENERATED FROM PYTHON SOURCE LINES 63-69
+.. GENERATED FROM PYTHON SOURCE LINES 67-73
 
 .. code-block:: Python
 
@@ -134,13 +138,13 @@ Convert to torch tensors
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 70-73
+.. GENERATED FROM PYTHON SOURCE LINES 74-77
 
 Split the data
 --------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 75-85
+.. GENERATED FROM PYTHON SOURCE LINES 79-89
 
 .. code-block:: Python
 
@@ -161,13 +165,16 @@ Split the data
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 86-89
+.. GENERATED FROM PYTHON SOURCE LINES 90-96
 
 Define the model
 ----------------
 
+Note that we have 11 input features and 1 output feature (the target), which
+match the number of columns in ``train_tensor`` and ``labels_tensor``, respectively.
 
-.. GENERATED FROM PYTHON SOURCE LINES 91-112
+
+.. GENERATED FROM PYTHON SOURCE LINES 98-119
 
 .. code-block:: Python
 
@@ -176,17 +183,17 @@ Define the model
         super().__init__()
 
         ### input layer
-        self.input = nn.Linear(11,16)
+        self.input = nn.Linear(11, 16)
     
         ### hidden layers
-        self.fc1 = nn.Linear(16,32)
-        self.fc2 = nn.Linear(32,32)
+        self.fc1 = nn.Linear(16, 32)
+        self.fc2 = nn.Linear(32, 32)
 
         ### output layer
-        self.output = nn.Linear(32,1)
+        self.output = nn.Linear(32, 1)
   
       # forward pass
-      def forward(self,x):
+      def forward(self, x):
         x = F.relu( self.input(x) )
         x = F.relu( self.fc1(x) )
         x = F.relu( self.fc2(x) )
@@ -199,13 +206,16 @@ Define the model
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 113-116
+.. GENERATED FROM PYTHON SOURCE LINES 120-126
 
 Train the model
 ------------------------------------
 
+We want to train the model to predict whether a wine is of good quality or not, based
+on the wine characteristics.
 
-.. GENERATED FROM PYTHON SOURCE LINES 118-165
+
+.. GENERATED FROM PYTHON SOURCE LINES 128-175
 
 .. code-block:: Python
 
@@ -263,13 +273,13 @@ Train the model
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 166-169
+.. GENERATED FROM PYTHON SOURCE LINES 176-179
 
 Compute the accuracy, precision, recall, and F1 score on the train and test sets
 ----------------------------------------------------------------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 171-197
+.. GENERATED FROM PYTHON SOURCE LINES 181-207
 
 .. code-block:: Python
 
@@ -307,25 +317,25 @@ Compute the accuracy, precision, recall, and F1 score on the train and test sets
 
  .. code-block:: none
 
-    Accuracy (train): 0.83
-    Accuracy (test): 0.80
-    Precision (train): 0.84
-    Precision (test): 0.81
-    Recall (train): 0.84
+    Accuracy (train): 0.82
+    Accuracy (test): 0.74
+    Precision (train): 0.83
+    Precision (test): 0.72
+    Recall (train): 0.83
     Recall (test): 0.81
-    F1-score (train): 0.84
-    F1-score (test): 0.81
+    F1-score (train): 0.83
+    F1-score (test): 0.76
 
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 198-201
+.. GENERATED FROM PYTHON SOURCE LINES 208-211
 
 Plot the metrics
 ----------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 203-214
+.. GENERATED FROM PYTHON SOURCE LINES 213-224
 
 .. code-block:: Python
 
@@ -352,17 +362,17 @@ Plot the metrics
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 215-218
+.. GENERATED FROM PYTHON SOURCE LINES 225-228
 
 Show the confusion matrices
 ---------------------------
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 220-221
+.. GENERATED FROM PYTHON SOURCE LINES 230-231
 
 Confusion matrices
 
-.. GENERATED FROM PYTHON SOURCE LINES 221-261
+.. GENERATED FROM PYTHON SOURCE LINES 231-271
 
 .. code-block:: Python
 
@@ -421,7 +431,7 @@ Confusion matrices
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (2 minutes 26.526 seconds)
+   **Total running time of the script:** (2 minutes 38.054 seconds)
 
 
 .. _sphx_glr_download_auto_examples_deep_learning_plot_arfp_wine.py:
