@@ -30,6 +30,8 @@ import seaborn as sns
 # Load the Wine dataset
 # ---------------------
 # We'll use the Wine dataset from the UCI Machine Learning Repository.
+# We'll create a new variable, "good_quality". If the wine quality is greater than 5,
+# we'll set "good_quality" to 1 (True), otherwise we'll set it to 0 (False).
 
 # %%
 url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
@@ -58,6 +60,8 @@ df
 # Convert to torch tensors
 # ------------------------
 #
+# Note that we pass all columns except "quality" and "good_quality" to the input tensor.
+# The target tensor is the "good_quality" boolean variable column.
 
 # %%
 train_tensor = df.select(
@@ -86,6 +90,9 @@ test_loader = DataLoader(dataset=test_dataset, batch_size=n_samples, shuffle=Fal
 # Define the model
 # ----------------
 #
+# Note that we have 11 input features and 1 output feature (the target), which
+# match the number of columns in ``train_tensor`` and ``labels_tensor``, respectively.
+#
 
 # %%
 class WineNet(nn.Module):
@@ -93,17 +100,17 @@ class WineNet(nn.Module):
     super().__init__()
 
     ### input layer
-    self.input = nn.Linear(11,16)
+    self.input = nn.Linear(11, 16)
     
     ### hidden layers
-    self.fc1 = nn.Linear(16,32)
-    self.fc2 = nn.Linear(32,32)
+    self.fc1 = nn.Linear(16, 32)
+    self.fc2 = nn.Linear(32, 32)
 
     ### output layer
-    self.output = nn.Linear(32,1)
+    self.output = nn.Linear(32, 1)
   
   # forward pass
-  def forward(self,x):
+  def forward(self, x):
     x = F.relu( self.input(x) )
     x = F.relu( self.fc1(x) )
     x = F.relu( self.fc2(x) )
@@ -112,6 +119,9 @@ class WineNet(nn.Module):
 # %%
 # Train the model
 # ------------------------------------
+#
+# We want to train the model to predict whether a wine is of good quality or not, based
+# on the wine characteristics.
 #
 
 # %%
