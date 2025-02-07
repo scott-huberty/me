@@ -4,6 +4,8 @@ jupyter-sphinx
 sympy
 scikit-learn
 torch
+mne
+h5py
 matplotlib
 polars
 seaborn

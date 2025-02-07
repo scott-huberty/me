@@ -22,6 +22,10 @@ html.dark {
   --sy-c-text: #e5e5e2;
   --sy-c-light: var(--sy-c-text);
   --sy-c-heading: #ffffff;
+  --fig-background-color: var(--sy-c-background);
+  --primary-color: #da7757;
+  --secondary-color: hwb(210 13% 13%);
+  --accent-color:  #8373ca;
   .dark-logo {
     display: block;
     margin: 0 auto;
@@ -29,8 +33,7 @@ html.dark {
     height: 50px;
   }
   .admonition.note {
-    /* --color-1: color(display-p3 0.992 0.376 0.224/0.051); */
-    --color-1: rgb(37, 60, 80);
+    --color-1: rgb(37, 60, 80); /* background */
     --color-2: rgb(87, 177, 255, .3); /* top bar */
     --color-3: rgb(87, 177, 255); /* left accent */
     --color-4: rgb(75, 171, 255); /* title text */
@@ -39,4 +42,9 @@ html.dark {
 
 html[data-accent-color='tomato'] {
   --accent-9: #da7757;
+}
+
+.sphx-glr-thumbcontainer[tooltip]:hover::before,
+.sphx-glr-thumbcontainer[tooltip]:hover::after {
+    display: none;
 }
