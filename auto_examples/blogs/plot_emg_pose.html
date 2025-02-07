@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="tomato" data-content_root="../../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Predict hand pose from EMG signals using ML - Scott Huberty documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Deep Learning" href="../deep_learning/index.html" /><link rel="prev" title="Use ICA to isolate the instruments in a 100 Gecs song." href="plot_most_wanted.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=10d1008b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link media="print" rel="stylesheet" type="text/css" href="../../_static/print.css?v=20ff2c19" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=80efab5c" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+    /* use light (400) and bold (800) weights */
+:root {
+    --sy-f-heading: 'Libre Baskerville', var(--sy-f-sys), sans-serif;
+    --sy-f-text: 'Open Sans', var(--sy-f-sys), sans-serif;
+    --sy-f-text-light: 400;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Predict hand pose from EMG signals using ML"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="../../index.html">
+      <img class="light-logo" src="../../_static/logo.svg" alt="Scott Huberty" height="28" loading="lazy" />
+      <img class="dark-logo" src="../../_static/logo_dark.png" alt="Scott Huberty" height="28" loading="lazy" />
+      <strong>Scott Huberty</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"><ul><li class="link"><a href="../.././auto_examples/index.html">Teaching</a></li><li class="link"><a href="../.././portfolio.html">Portfolio</a></li></ul></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials">
+  <a href="https://github.com/scott-huberty" aria-label="GitHub">
+    <iconify-icon icon="simple-icons:github"></iconify-icon>
+  </a></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../me.html">Bio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Educational Materials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html#blogs">Blogs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html#deep-learning">Deep Learning</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Blogs</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Predict hand pose from EMG signals using ML</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deep_learning/index.html">Deep Learning</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deep_learning/plot_accuracy_precision_recall.html">Accuracy, precision, and recall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deep_learning/plot_arfp_wine.html">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plot_most_wanted.html">Use ICA to isolate the instruments in a 100 Gecs song.</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#create-a-helper-function-to-read-the-data">Create a helper function to read the data</a></li>
+<li><a class="reference internal" href="#download-the-dataset">Download the dataset</a></li>
+<li><a class="reference internal" href="#load-the-data">Load the data</a></li>
+<li><a class="reference internal" href="#visualize-the-data">Visualize the data</a></li>
+<li><a class="reference internal" href="#use-pca-and-kmeans-to-cluster-the-data">Use PCA and KMeans to cluster the data</a></li>
+<li><a class="reference internal" href="#visualize-the-clusters">Visualize the clusters</a></li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../../index.html"><span itemprop="name">Scott Huberty</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="../index.html"><span itemprop="name">Educational Materials</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="2" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">Blogs</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="3" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Predict hand pose from EMG signals using ML</strong>
+        <meta itemprop="position" content="4" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-blogs-plot-emg-pose-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="predict-hand-pose-from-emg-signals-using-ml">
+<span id="sphx-glr-auto-examples-blogs-plot-emg-pose-py"></span><h1>Predict hand pose from EMG signals using ML<a class="headerlink" href="#predict-hand-pose-from-emg-signals-using-ml" title="Link to this heading">¶</a></h1>
+<p>Meta has been doing a lot of work trying to figure out how to replace
+keyboards and controllers with hand gestures (when the user is wearing
+a wrist band).</p>
+<p>Back when I was a young hopper (AKA a PhD student), I interviewed with
+their Reality Labs team. The technical interview at the time was to
+take a dataset of EMG signals from a participant, and to predict the
+hand pose of the participant (Also, nearly pure python.. I.e. no
+scikit-learn, no pytorch. Woof).</p>
+<p>Well now they’ve open-sourced the EMG dataset from that project, so
+I am going to save some soul out there some time and show how them
+how to do it.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">KeysView</span>
+</span><span data-line="2"><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+</span><span data-line="3"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span data-line="4"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">ClassVar</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+</span><span data-line="7"><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+</span><span data-line="8"><span class="kn">import</span><span class="w"> </span><span class="nn">mne</span>
+</span><span data-line="9"><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</span><span data-line="10"><span class="kn">import</span><span class="w"> </span><span class="nn">pooch</span>
+</span><span data-line="11"><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+</span><span data-line="12"><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+</span><span data-line="13"><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
+</span></pre></div>
+</div>
+<section id="create-a-helper-function-to-read-the-data">
+<h2>Create a helper function to read the data<a class="headerlink" href="#create-a-helper-function-to-read-the-data" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="nd">@dataclass</span>
+</span><span data-line="2"><span class="k">class</span><span class="w"> </span><span class="nc">Emg2PoseSessionData</span><span class="p">:</span>
+</span><span data-line="3"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A read-only interface to a single emg2pose session file stored in</span>
+</span><span data-line="4"><span class="sd">    HDF5 format.</span>
+</span><span data-line="5">
+</span><span data-line="6"><span class="sd">    ``self.timeseries`` is a `h5py.Dataset` instance with a compound data type</span>
+</span><span data-line="7"><span class="sd">    as in a numpy structured array containing three fields - EMG data from the</span>
+</span><span data-line="8"><span class="sd">    left and right wrists, and their corresponding timestamps.</span>
+</span><span data-line="9"><span class="sd">    The sampling rate of EMG is 2kHz, each EMG device has 16 electrode</span>
+</span><span data-line="10"><span class="sd">    channels, and the signal has been high-pass filtered. Therefore, the fields</span>
+</span><span data-line="11"><span class="sd">    corresponding to left and right EMG are 2D arrays of shape ``(T, 16)`` each</span>
+</span><span data-line="12"><span class="sd">    and ``timestamps`` is a 1D array of length ``T``.</span>
+</span><span data-line="13">
+</span><span data-line="14"><span class="sd">    NOTE: Only the metadata and ground-truth are loaded into memory while the</span>
+</span><span data-line="15"><span class="sd">    EMG data is accesssed directly from disk. When wrapping this interface</span>
+</span><span data-line="16"><span class="sd">    within a PyTorch Dataset, use multiple dataloading workers to mask the</span>
+</span><span data-line="17"><span class="sd">    disk seek and read latencies.&quot;&quot;&quot;</span>
+</span><span data-line="18">
+</span><span data-line="19">    <span class="n">HDF5_GROUP</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;emg2pose&quot;</span>
+</span><span data-line="20">    <span class="c1"># timeseries keys</span>
+</span><span data-line="21">    <span class="n">TIMESERIES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;timeseries&quot;</span>
+</span><span data-line="22">    <span class="n">EMG</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;emg&quot;</span>
+</span><span data-line="23">    <span class="n">JOINT_ANGLES</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;joint_angles&quot;</span>
+</span><span data-line="24">    <span class="n">TIMESTAMPS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+</span><span data-line="25">    <span class="c1"># metadata keys</span>
+</span><span data-line="26">    <span class="n">SESSION_NAME</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;session&quot;</span>
+</span><span data-line="27">    <span class="n">SIDE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;side&quot;</span>
+</span><span data-line="28">    <span class="n">STAGE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;stage&quot;</span>
+</span><span data-line="29">    <span class="n">START_TIME</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;start&quot;</span>
+</span><span data-line="30">    <span class="n">END_TIME</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;end&quot;</span>
+</span><span data-line="31">    <span class="n">NUM_CHANNELS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;num_channels&quot;</span>
+</span><span data-line="32">    <span class="n">DATASET_NAME</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dataset&quot;</span>
+</span><span data-line="33">    <span class="n">USER</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;user&quot;</span>
+</span><span data-line="34">    <span class="n">SAMPLE_RATE</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sample_rate&quot;</span>
+</span><span data-line="35">
+</span><span data-line="36">    <span class="n">hdf5_path</span><span class="p">:</span> <span class="n">Path</span>
+</span><span data-line="37">
+</span><span data-line="38">    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="39">        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hdf5_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+</span><span data-line="40">        <span class="n">emg2pose_group</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">HDF5_GROUP</span><span class="p">]</span>
+</span><span data-line="41">
+</span><span data-line="42">        <span class="c1"># ``timeseries`` is a HDF5 compound Dataset</span>
+</span><span data-line="43">        <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Dataset</span> <span class="o">=</span> <span class="n">emg2pose_group</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TIMESERIES</span><span class="p">]</span>
+</span><span data-line="44">        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</span><span data-line="45">        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">EMG</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span>
+</span><span data-line="46">        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">JOINT_ANGLES</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span>
+</span><span data-line="47">        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">TIMESTAMPS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span>
+</span><span data-line="48">
+</span><span data-line="49">        <span class="c1"># Load the metadata entirely into memory as it&#39;s rather small</span>
+</span><span data-line="50">        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span data-line="51">        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">emg2pose_group</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+</span><span data-line="52">            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+</span><span data-line="53">
+</span><span data-line="54">    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span data-line="55">        <span class="k">return</span> <span class="bp">self</span>
+</span><span data-line="56">
+</span><span data-line="57">    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span data-line="58">        <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span data-line="59">
+</span><span data-line="60">    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span data-line="61">        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">)</span>
+</span><span data-line="62">
+</span><span data-line="63">    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">slice</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span data-line="64">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+</span><span data-line="65">
+</span><span data-line="66">    <span class="k">def</span><span class="w"> </span><span class="nf">slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">end_t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span data-line="67"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and return a contiguous slice of the timeseries windowed</span>
+</span><span data-line="68"><span class="sd">        by the provided start and end timestamps.</span>
+</span><span data-line="69">
+</span><span data-line="70"><span class="sd">        Args:</span>
+</span><span data-line="71"><span class="sd">            start_t (float): The start time of the window to grab</span>
+</span><span data-line="72"><span class="sd">                (in absolute unix time). Defaults to selecting from the</span>
+</span><span data-line="73"><span class="sd">                beginning of the session. (default: ``-np.inf``).</span>
+</span><span data-line="74"><span class="sd">            end_t (float): The end time of the window to grab</span>
+</span><span data-line="75"><span class="sd">                (in absolute unix time). Defaults to selecting until the</span>
+</span><span data-line="76"><span class="sd">                end of the session. (default: ``np.inf``)</span>
+</span><span data-line="77"><span class="sd">        &quot;&quot;&quot;</span>
+</span><span data-line="78">        <span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamps</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">([</span><span class="n">start_t</span><span class="p">,</span> <span class="n">end_t</span><span class="p">])</span>
+</span><span data-line="79">        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+</span><span data-line="80">
+</span><span data-line="81">    <span class="nd">@property</span>
+</span><span data-line="82">    <span class="k">def</span><span class="w"> </span><span class="nf">fields</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span data-line="83"><span class="w">        </span><span class="sd">&quot;&quot;&quot;The names of the fields in ``timeseries``.&quot;&quot;&quot;</span>
+</span><span data-line="84">        <span class="n">fields</span><span class="p">:</span> <span class="n">KeysView</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+</span><span data-line="85">        <span class="k">return</span> <span class="n">fields</span>
+</span><span data-line="86">
+</span><span data-line="87">    <span class="nd">@property</span>
+</span><span data-line="88">    <span class="k">def</span><span class="w"> </span><span class="nf">timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span data-line="89"><span class="w">        </span><span class="sd">&quot;&quot;&quot;EMG timestamps.</span>
+</span><span data-line="90">
+</span><span data-line="91"><span class="sd">        NOTE: This reads the entire sequence of timesetamps from the underlying</span>
+</span><span data-line="92"><span class="sd">        HDF5 file and therefore incurs disk latency. Avoid this in the critical</span>
+</span><span data-line="93"><span class="sd">        path.&quot;&quot;&quot;</span>
+</span><span data-line="94">        <span class="n">emg_timestamps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeseries</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">TIMESTAMPS</span><span class="p">]</span>
+</span><span data-line="95">        <span class="k">assert</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">emg_timestamps</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;Not monotonic&quot;</span>
+</span><span data-line="96">        <span class="k">return</span> <span class="n">emg_timestamps</span>
+</span><span data-line="97">
+</span><span data-line="98">    <span class="nd">@property</span>
+</span><span data-line="99">    <span class="k">def</span><span class="w"> </span><span class="nf">session_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="100"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Unique name of the session.&quot;&quot;&quot;</span>
+</span><span data-line="101">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">SESSION_NAME</span><span class="p">]</span>
+</span><span data-line="102">
+</span><span data-line="103">    <span class="nd">@property</span>
+</span><span data-line="104">    <span class="k">def</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="105"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Unique ID of the user this session corresponds to.&quot;&quot;&quot;</span>
+</span><span data-line="106">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">USER</span><span class="p">]</span>
+</span><span data-line="107">
+</span><span data-line="108">    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span data-line="109">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">session_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2"> samples)&quot;</span>
+</span></pre></div>
+</div>
+</section>
+<section id="download-the-dataset">
+<h2>Download the dataset<a class="headerlink" href="#download-the-dataset" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;emg_data&quot;</span>
+</span><span data-line="2"><span class="n">emg_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;emg2pose_dataset_mini&quot;</span>
+</span><span data-line="3"><span class="n">want_fpath</span> <span class="o">=</span> <span class="s2">&quot;emg2pose_dataset_mini/2022-12-06-1670313600-e3096-cv-emg-pose-train@2-recording-1_left.hdf5&quot;</span>
+</span><span data-line="4">
+</span><span data-line="5"><span class="n">unpack</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">Untar</span><span class="p">(</span><span class="n">extract_dir</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span> <span class="c1"># Relative to the path where the zip file is downloaded</span>
+</span><span data-line="6">                     <span class="n">members</span><span class="o">=</span><span class="p">[</span><span class="n">want_fpath</span><span class="p">]</span>
+</span><span data-line="7">                     <span class="p">)</span>
+</span><span data-line="8"><span class="n">emg_fpaths</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+</span><span data-line="9">    <span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://fb-ctrl-oss.s3.amazonaws.com/emg2pose/emg2pose_dataset_mini.tar&quot;</span><span class="p">,</span>
+</span><span data-line="10">    <span class="n">known_hash</span><span class="o">=</span><span class="s2">&quot;sha256:d7400e98508ccbb2139c2d78e552867b23501f637456546fd6680f3fe7fec50d&quot;</span><span class="p">,</span>
+</span><span data-line="11">    <span class="n">progressbar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span data-line="12">    <span class="n">path</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+</span><span data-line="13">    <span class="n">processor</span><span class="o">=</span><span class="n">unpack</span><span class="p">,</span>
+</span><span data-line="14"><span class="p">)</span>
+</span><span data-line="15"><span class="n">emg_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">emg_fpaths</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</span><span data-line="16"><span class="n">emg_dir</span> <span class="o">=</span> <span class="n">emg_fname</span><span class="o">.</span><span class="n">parent</span>
+</span><span data-line="17"><span class="c1"># Delete the large tar file</span>
+</span><span data-line="18"><span class="c1"># list(emg_dir.glob(&quot;*.tar&quot;))[0].unlink()</span>
+</span></pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">  0%|                                               | 0.00/647M [00:00&lt;?, ?B/s]
+</span><span data-line="2">  1%|▍                                     | 6.61M/647M [00:00&lt;00:11, 56.4MB/s]
+</span><span data-line="3">  2%|▋                                     | 12.2M/647M [00:00&lt;00:16, 38.6MB/s]
+</span><span data-line="4">  3%|▉                                     | 16.4M/647M [00:00&lt;00:23, 26.4MB/s]
+</span><span data-line="5">  3%|█▏                                    | 19.4M/647M [00:00&lt;00:25, 24.4MB/s]
+</span><span data-line="6">  4%|█▎                                    | 23.4M/647M [00:00&lt;00:28, 22.2MB/s]
+</span><span data-line="7">  4%|█▌                                    | 25.7M/647M [00:01&lt;00:31, 19.9MB/s]
+</span><span data-line="8">  5%|█▊                                    | 31.8M/647M [00:01&lt;00:29, 21.0MB/s]
+</span><span data-line="9">  5%|█▉                                    | 33.9M/647M [00:01&lt;00:32, 19.1MB/s]
+</span><span data-line="10">  6%|██▎                                   | 40.2M/647M [00:01&lt;00:24, 24.4MB/s]
+</span><span data-line="11">  7%|██▌                                   | 43.0M/647M [00:01&lt;00:23, 25.2MB/s]
+</span><span data-line="12">  8%|██▉                                   | 50.3M/647M [00:01&lt;00:20, 28.8MB/s]
+</span><span data-line="13">  9%|███▎                                  | 56.9M/647M [00:02&lt;00:23, 25.6MB/s]
+</span><span data-line="14">  9%|███▍                                  | 59.6M/647M [00:02&lt;00:24, 24.2MB/s]
+</span><span data-line="15"> 10%|███▊                                  | 65.3M/647M [00:02&lt;00:21, 27.2MB/s]
+</span><span data-line="16"> 11%|███▉                                  | 68.1M/647M [00:02&lt;00:23, 24.9MB/s]
+</span><span data-line="17"> 11%|████▎                                 | 74.1M/647M [00:03&lt;00:29, 19.5MB/s]
+</span><span data-line="18"> 12%|████▍                                 | 76.3M/647M [00:03&lt;00:30, 18.9MB/s]
+</span><span data-line="19"> 13%|████▊                                 | 82.1M/647M [00:03&lt;00:23, 23.9MB/s]
+</span><span data-line="20"> 13%|████▉                                 | 84.8M/647M [00:03&lt;00:25, 22.1MB/s]
+</span><span data-line="21"> 14%|█████▎                                | 90.5M/647M [00:03&lt;00:23, 23.9MB/s]
+</span><span data-line="22"> 14%|█████▍                                | 93.0M/647M [00:03&lt;00:25, 21.4MB/s]
+</span><span data-line="23"> 15%|█████▊                                | 98.9M/647M [00:04&lt;00:24, 22.6MB/s]
+</span><span data-line="24"> 16%|██████                                 | 101M/647M [00:04&lt;00:25, 21.3MB/s]
+</span><span data-line="25"> 17%|██████▍                                | 107M/647M [00:04&lt;00:36, 14.8MB/s]
+</span><span data-line="26"> 17%|██████▌                                | 109M/647M [00:05&lt;00:36, 14.9MB/s]
+</span><span data-line="27"> 18%|██████▉                                | 116M/647M [00:05&lt;00:23, 23.0MB/s]
+</span><span data-line="28"> 18%|███████▏                               | 119M/647M [00:05&lt;00:22, 23.6MB/s]
+</span><span data-line="29"> 19%|███████▍                               | 124M/647M [00:05&lt;00:24, 21.1MB/s]
+</span><span data-line="30"> 20%|███████▋                               | 127M/647M [00:05&lt;00:25, 20.8MB/s]
+</span><span data-line="31"> 21%|████████                               | 134M/647M [00:05&lt;00:16, 30.2MB/s]
+</span><span data-line="32"> 21%|████████▎                              | 138M/647M [00:05&lt;00:17, 29.2MB/s]
+</span><span data-line="33"> 22%|████████▌                              | 141M/647M [00:06&lt;00:17, 29.3MB/s]
+</span><span data-line="34"> 22%|████████▋                              | 145M/647M [00:06&lt;00:19, 26.4MB/s]
+</span><span data-line="35"> 23%|█████████                              | 151M/647M [00:06&lt;00:17, 28.3MB/s]
+</span><span data-line="36"> 25%|█████████▌                             | 159M/647M [00:06&lt;00:15, 30.9MB/s]
+</span><span data-line="37"> 26%|██████████                             | 166M/647M [00:06&lt;00:12, 38.0MB/s]
+</span><span data-line="38"> 26%|██████████▎                            | 171M/647M [00:06&lt;00:16, 29.6MB/s]
+</span><span data-line="39"> 27%|██████████▌                            | 176M/647M [00:07&lt;00:16, 28.7MB/s]
+</span><span data-line="40"> 29%|███████████                            | 185M/647M [00:07&lt;00:12, 38.1MB/s]
+</span><span data-line="41"> 30%|███████████▌                           | 191M/647M [00:07&lt;00:10, 42.8MB/s]
+</span><span data-line="42"> 30%|███████████▊                           | 196M/647M [00:07&lt;00:12, 36.4MB/s]
+</span><span data-line="43"> 31%|████████████                           | 200M/647M [00:07&lt;00:13, 32.7MB/s]
+</span><span data-line="44"> 32%|████████████▎                          | 204M/647M [00:07&lt;00:14, 29.7MB/s]
+</span><span data-line="45"> 32%|████████████▋                          | 210M/647M [00:08&lt;00:12, 35.3MB/s]
+</span><span data-line="46"> 33%|█████████████                          | 216M/647M [00:08&lt;00:10, 39.3MB/s]
+</span><span data-line="47"> 34%|█████████████▎                         | 221M/647M [00:08&lt;00:11, 37.0MB/s]
+</span><span data-line="48"> 35%|█████████████▋                         | 226M/647M [00:08&lt;00:12, 33.4MB/s]
+</span><span data-line="49"> 36%|██████████████                         | 233M/647M [00:08&lt;00:11, 36.2MB/s]
+</span><span data-line="50"> 37%|██████████████▎                        | 237M/647M [00:08&lt;00:11, 34.9MB/s]
+</span><span data-line="51"> 37%|██████████████▌                        | 242M/647M [00:09&lt;00:14, 27.8MB/s]
+</span><span data-line="52"> 38%|██████████████▊                        | 245M/647M [00:09&lt;00:17, 22.7MB/s]
+</span><span data-line="53"> 39%|███████████████▏                       | 252M/647M [00:09&lt;00:14, 27.0MB/s]
+</span><span data-line="54"> 40%|███████████████▌                       | 259M/647M [00:09&lt;00:15, 25.9MB/s]
+</span><span data-line="55"> 40%|███████████████▊                       | 261M/647M [00:09&lt;00:15, 24.4MB/s]
+</span><span data-line="56"> 41%|████████████████                       | 267M/647M [00:10&lt;00:14, 26.4MB/s]
+</span><span data-line="57"> 42%|████████████████▏                      | 269M/647M [00:10&lt;00:15, 25.1MB/s]
+</span><span data-line="58"> 42%|████████████████▌                      | 275M/647M [00:10&lt;00:13, 27.3MB/s]
+</span><span data-line="59"> 43%|████████████████▋                      | 278M/647M [00:10&lt;00:14, 24.9MB/s]
+</span><span data-line="60"> 44%|█████████████████                      | 283M/647M [00:10&lt;00:11, 31.3MB/s]
+</span><span data-line="61"> 44%|█████████████████▎                     | 287M/647M [00:10&lt;00:12, 29.7MB/s]
+</span><span data-line="62"> 45%|█████████████████▌                     | 292M/647M [00:10&lt;00:10, 33.8MB/s]
+</span><span data-line="63"> 46%|█████████████████▊                     | 295M/647M [00:11&lt;00:12, 29.2MB/s]
+</span><span data-line="64"> 46%|██████████████████                     | 300M/647M [00:11&lt;00:16, 21.2MB/s]
+</span><span data-line="65"> 47%|██████████████████▏                    | 303M/647M [00:11&lt;00:15, 21.8MB/s]
+</span><span data-line="66"> 48%|██████████████████▌                    | 309M/647M [00:11&lt;00:12, 28.1MB/s]
+</span><span data-line="67"> 48%|██████████████████▊                    | 312M/647M [00:11&lt;00:12, 25.9MB/s]
+</span><span data-line="68"> 49%|███████████████████▏                   | 319M/647M [00:11&lt;00:10, 31.8MB/s]
+</span><span data-line="69"> 50%|███████████████████▌                   | 325M/647M [00:12&lt;00:09, 33.6MB/s]
+</span><span data-line="70"> 51%|███████████████████▊                   | 329M/647M [00:12&lt;00:10, 30.7MB/s]
+</span><span data-line="71"> 52%|████████████████████▏                  | 336M/647M [00:12&lt;00:09, 32.0MB/s]
+</span><span data-line="72"> 53%|████████████████████▌                  | 342M/647M [00:12&lt;00:08, 35.8MB/s]
+</span><span data-line="73"> 53%|████████████████████▊                  | 346M/647M [00:12&lt;00:08, 34.1MB/s]
+</span><span data-line="74"> 54%|█████████████████████▏                 | 351M/647M [00:12&lt;00:08, 33.8MB/s]
+</span><span data-line="75"> 55%|█████████████████████▎                 | 354M/647M [00:12&lt;00:09, 32.1MB/s]
+</span><span data-line="76"> 55%|█████████████████████▌                 | 358M/647M [00:13&lt;00:10, 26.5MB/s]
+</span><span data-line="77"> 56%|█████████████████████▋                 | 360M/647M [00:13&lt;00:12, 23.0MB/s]
+</span><span data-line="78"> 56%|█████████████████████▊                 | 363M/647M [00:13&lt;00:14, 19.4MB/s]
+</span><span data-line="79"> 57%|██████████████████████▏                | 369M/647M [00:13&lt;00:11, 23.4MB/s]
+</span><span data-line="80"> 58%|██████████████████████▋                | 376M/647M [00:13&lt;00:09, 27.3MB/s]
+</span><span data-line="81"> 58%|██████████████████████▊                | 378M/647M [00:14&lt;00:11, 24.4MB/s]
+</span><span data-line="82"> 60%|███████████████████████▎               | 386M/647M [00:14&lt;00:08, 29.7MB/s]
+</span><span data-line="83"> 61%|███████████████████████▋               | 392M/647M [00:14&lt;00:07, 36.3MB/s]
+</span><span data-line="84"> 61%|███████████████████████▉               | 396M/647M [00:14&lt;00:07, 34.1MB/s]
+</span><span data-line="85"> 62%|████████████████████████▏              | 401M/647M [00:14&lt;00:07, 32.8MB/s]
+</span><span data-line="86"> 62%|████████████████████████▎              | 404M/647M [00:14&lt;00:08, 29.4MB/s]
+</span><span data-line="87"> 63%|████████████████████████▋              | 409M/647M [00:15&lt;00:09, 26.2MB/s]
+</span><span data-line="88"> 64%|████████████████████████▊              | 412M/647M [00:15&lt;00:11, 21.0MB/s]
+</span><span data-line="89"> 65%|█████████████████████████▏             | 418M/647M [00:15&lt;00:09, 25.3MB/s]
+</span><span data-line="90"> 65%|█████████████████████████▎             | 420M/647M [00:15&lt;00:09, 24.0MB/s]
+</span><span data-line="91"> 66%|█████████████████████████▋             | 426M/647M [00:15&lt;00:07, 28.7MB/s]
+</span><span data-line="92"> 66%|█████████████████████████▊             | 429M/647M [00:15&lt;00:09, 23.3MB/s]
+</span><span data-line="93"> 67%|██████████████████████████▏            | 435M/647M [00:16&lt;00:06, 30.9MB/s]
+</span><span data-line="94"> 68%|██████████████████████████▍            | 439M/647M [00:16&lt;00:07, 26.5MB/s]
+</span><span data-line="95"> 69%|██████████████████████████▋            | 443M/647M [00:16&lt;00:06, 30.2MB/s]
+</span><span data-line="96"> 69%|██████████████████████████▉            | 447M/647M [00:16&lt;00:06, 29.0MB/s]
+</span><span data-line="97"> 70%|███████████████████████████▎           | 453M/647M [00:16&lt;00:05, 35.6MB/s]
+</span><span data-line="98"> 71%|███████████████████████████▌           | 457M/647M [00:16&lt;00:06, 30.7MB/s]
+</span><span data-line="99"> 71%|███████████████████████████▋           | 460M/647M [00:17&lt;00:09, 20.2MB/s]
+</span><span data-line="100"> 72%|███████████████████████████▉           | 463M/647M [00:17&lt;00:09, 19.4MB/s]
+</span><span data-line="101"> 72%|████████████████████████████▏          | 468M/647M [00:17&lt;00:09, 19.8MB/s]
+</span><span data-line="102"> 73%|████████████████████████████▎          | 471M/647M [00:17&lt;00:09, 18.7MB/s]
+</span><span data-line="103"> 74%|████████████████████████████▋          | 476M/647M [00:18&lt;00:09, 17.5MB/s]
+</span><span data-line="104"> 74%|████████████████████████████▊          | 478M/647M [00:18&lt;00:10, 16.4MB/s]
+</span><span data-line="105"> 75%|█████████████████████████████▏         | 485M/647M [00:18&lt;00:06, 24.1MB/s]
+</span><span data-line="106"> 75%|█████████████████████████████▍         | 488M/647M [00:18&lt;00:06, 23.3MB/s]
+</span><span data-line="107"> 76%|█████████████████████████████▋         | 493M/647M [00:18&lt;00:05, 27.5MB/s]
+</span><span data-line="108"> 77%|█████████████████████████████▉         | 496M/647M [00:18&lt;00:05, 26.4MB/s]
+</span><span data-line="109"> 77%|██████████████████████████████▏        | 502M/647M [00:18&lt;00:05, 27.1MB/s]
+</span><span data-line="110"> 78%|██████████████████████████████▍        | 504M/647M [00:19&lt;00:05, 26.6MB/s]
+</span><span data-line="111"> 79%|██████████████████████████████▋        | 510M/647M [00:19&lt;00:05, 23.7MB/s]
+</span><span data-line="112"> 79%|██████████████████████████████▉        | 512M/647M [00:19&lt;00:06, 21.5MB/s]
+</span><span data-line="113"> 80%|███████████████████████████████▏       | 518M/647M [00:19&lt;00:04, 25.9MB/s]
+</span><span data-line="114"> 81%|███████████████████████████████▍       | 521M/647M [00:19&lt;00:05, 24.7MB/s]
+</span><span data-line="115"> 82%|███████████████████████████████▊       | 528M/647M [00:19&lt;00:03, 34.4MB/s]
+</span><span data-line="116"> 82%|████████████████████████████████       | 532M/647M [00:20&lt;00:03, 28.9MB/s]
+</span><span data-line="117"> 83%|████████████████████████████████▎      | 536M/647M [00:20&lt;00:03, 31.2MB/s]
+</span><span data-line="118"> 83%|████████████████████████████████▌      | 539M/647M [00:20&lt;00:03, 30.7MB/s]
+</span><span data-line="119"> 84%|████████████████████████████████▊      | 545M/647M [00:20&lt;00:03, 29.7MB/s]
+</span><span data-line="120"> 85%|█████████████████████████████████▎     | 552M/647M [00:20&lt;00:03, 27.8MB/s]
+</span><span data-line="121"> 86%|█████████████████████████████████▍     | 555M/647M [00:20&lt;00:03, 25.9MB/s]
+</span><span data-line="122"> 87%|█████████████████████████████████▊     | 560M/647M [00:21&lt;00:03, 28.6MB/s]
+</span><span data-line="123"> 87%|█████████████████████████████████▉     | 563M/647M [00:21&lt;00:03, 27.0MB/s]
+</span><span data-line="124"> 88%|██████████████████████████████████▎    | 569M/647M [00:21&lt;00:02, 26.2MB/s]
+</span><span data-line="125"> 88%|██████████████████████████████████▍    | 571M/647M [00:21&lt;00:03, 23.1MB/s]
+</span><span data-line="126"> 89%|██████████████████████████████████▉    | 579M/647M [00:21&lt;00:02, 30.7MB/s]
+</span><span data-line="127"> 90%|███████████████████████████████████▏   | 584M/647M [00:21&lt;00:01, 34.3MB/s]
+</span><span data-line="128"> 91%|███████████████████████████████████▍   | 587M/647M [00:21&lt;00:01, 30.6MB/s]
+</span><span data-line="129"> 92%|███████████████████████████████████▊   | 594M/647M [00:22&lt;00:01, 34.1MB/s]
+</span><span data-line="130"> 92%|███████████████████████████████████▉   | 597M/647M [00:22&lt;00:01, 30.4MB/s]
+</span><span data-line="131"> 93%|████████████████████████████████████▍  | 604M/647M [00:22&lt;00:01, 35.5MB/s]
+</span><span data-line="132"> 95%|████████████████████████████████████▉  | 612M/647M [00:22&lt;00:01, 34.0MB/s]
+</span><span data-line="133"> 96%|█████████████████████████████████████▎ | 619M/647M [00:22&lt;00:00, 32.0MB/s]
+</span><span data-line="134"> 96%|█████████████████████████████████████▍ | 622M/647M [00:23&lt;00:00, 28.0MB/s]
+</span><span data-line="135"> 97%|█████████████████████████████████████▊ | 628M/647M [00:23&lt;00:00, 30.8MB/s]
+</span><span data-line="136"> 97%|██████████████████████████████████████ | 631M/647M [00:23&lt;00:00, 27.9MB/s]
+</span><span data-line="137"> 98%|██████████████████████████████████████▍| 637M/647M [00:23&lt;00:00, 34.9MB/s]
+</span><span data-line="138"> 99%|██████████████████████████████████████▋| 641M/647M [00:23&lt;00:00, 34.3MB/s]
+</span><span data-line="139">  0%|                                               | 0.00/647M [00:00&lt;?, ?B/s]
+</span><span data-line="140">100%|███████████████████████████████████████| 647M/647M [00:00&lt;00:00, 1.93TB/s]
+</span></pre></div>
+</div>
+</section>
+<section id="load-the-data">
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">data</span> <span class="o">=</span> <span class="n">Emg2PoseSessionData</span><span class="p">(</span><span class="n">hdf5_path</span><span class="o">=</span><span class="n">emg_fname</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="visualize-the-data">
+<h2>Visualize the data<a class="headerlink" href="#visualize-the-data" title="Link to this heading">¶</a></h2>
+<p>We’ll let MNE-Python do the heavy lifting for us here.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">ch_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;EMG</span><span class="si">{</span><span class="n">ii</span><span class="si">:</span><span class="s2">02</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;emg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+</span><span data-line="2"><span class="n">ch_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;emg&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ch_names</span><span class="p">)</span>
+</span><span data-line="3"><span class="n">sfreq</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="n">Emg2PoseSessionData</span><span class="o">.</span><span class="n">SAMPLE_RATE</span><span class="p">]</span>
+</span><span data-line="4"><span class="n">info</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">create_info</span><span class="p">(</span><span class="n">ch_names</span><span class="o">=</span><span class="n">ch_names</span><span class="p">,</span> <span class="n">ch_types</span><span class="o">=</span><span class="n">ch_types</span><span class="p">,</span> <span class="n">sfreq</span><span class="o">=</span><span class="n">sfreq</span><span class="p">)</span>
+</span><span data-line="5"><span class="c1"># MNE expects data in the shape (n_channels, n_times). So we need to transpose the data</span>
+</span><span data-line="6"><span class="n">raw</span> <span class="o">=</span> <span class="n">mne</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">RawArray</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;emg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span>
+</span><span data-line="7"><span class="c1"># MNE expects the EMG data to be in Volts, so we need to scale it from mV to V</span>
+</span><span data-line="8"><span class="n">raw</span><span class="o">.</span><span class="n">apply_function</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">picks</span><span class="o">=</span><span class="s2">&quot;emg&quot;</span><span class="p">)</span>
+</span><span data-line="9"><span class="n">raw</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_emg_pose_001.png" srcset="../../_images/sphx_glr_plot_emg_pose_001.png" alt="plot emg pose" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">Creating RawArray with float64 data, n_channels=16, n_times=142674
+</span><span data-line="2">    Range : 0 ... 142673 =      0.000 ...    71.337 secs
+</span><span data-line="3">Ready.
+</span><span data-line="4">Using matplotlib as 2D backend.
+</span><span data-line="5">
+</span><span data-line="6">&lt;MNEBrowseFigure size 800x800 with 4 Axes&gt;
+</span></pre></div>
+</div>
+</section>
+<section id="use-pca-and-kmeans-to-cluster-the-data">
+<h2>Use PCA and KMeans to cluster the data<a class="headerlink" href="#use-pca-and-kmeans-to-cluster-the-data" title="Link to this heading">¶</a></h2>
+<p>We’ll use PCA to reduce the data dimenstionality to 3D
+and then use KMeans to cluster the data.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">n_components</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span data-line="2"><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">)</span>
+</span><span data-line="3"><span class="n">data_pca</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;emg&quot;</span><span class="p">])</span>
+</span><span data-line="4"><span class="n">clusters</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">data_pca</span><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+<section id="visualize-the-clusters">
+<h2>Visualize the clusters<a class="headerlink" href="#visualize-the-clusters" title="Link to this heading">¶</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">)</span>
+</span><span data-line="2"><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">subplot_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;projection&quot;</span><span class="p">:</span> <span class="s2">&quot;3d&quot;</span><span class="p">})</span>
+</span><span data-line="3"><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">data_pca</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">data_pca</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">data_pca</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">clusters</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;PC1&quot;</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;PC2&quot;</span><span class="p">)</span>
+</span><span data-line="6"><span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;PC3&quot;</span><span class="p">)</span>
+</span><span data-line="7"><span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;PCA of EMG data with KMeans clustering&quot;</span><span class="p">)</span>
+</span><span data-line="8"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</span></pre></div>
+</div>
+<img src="../../_images/sphx_glr_plot_emg_pose_002.png" srcset="../../_images/sphx_glr_plot_emg_pose_002.png" alt="PCA of EMG data with KMeans clustering" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 30.840 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-blogs-plot-emg-pose-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/c542e0aa326fa5ba1903b5d08e41180a/plot_emg_pose.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_emg_pose.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/bbb3994261563e87ce846a82f9c8e08e/plot_emg_pose.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">plot_emg_pose.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/89434c931930269f2171f9c5b357843a/plot_emg_pose.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">plot_emg_pose.zip</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="plot_most_wanted.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Use ICA to isolate the instruments in a 100 Gecs song.</div></div>
+    </a>
+  </div><div class="navigation-next">
+    <a href="../deep_learning/index.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Deep Learning</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2024, Scott Huberty</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials">
+<a href="https://github.com/scott-huberty" aria-label="GitHub">
+  <iconify-icon icon="simple-icons:github"></iconify-icon>
+</a>
+<a href="https://www.linkedin.com/in/scott-h-40113b1a2/" aria-label="LinkedIn">
+  <iconify-icon icon="simple-icons:linkedin"></iconify-icon>
+</a></div>
+    </div>
+  </div>
+</footer>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/thebelab-helper.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
+      <script src="../../_static/shibuya.js?v=55e26b35"></script></body>
+</html>
