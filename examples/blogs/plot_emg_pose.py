@@ -173,7 +173,7 @@ emg_fpaths = pooch.retrieve(
 emg_fname = Path(emg_fpaths[0])
 emg_dir = emg_fname.parent
 # Delete the large tar file
-# list(emg_dir.glob("*.tar"))[0].unlink()
+list(emg_dir.glob("*.tar"))[0].unlink()
 
 # %%
 # Load the data
