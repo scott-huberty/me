@@ -48,7 +48,7 @@ Python ecosystem. A few of the projects I have contributed to include:
 Dashboards
 ^^^^^^^^^^
 
-.. Figure:: https://raw.githubusercontent.com/scott-huberty/Sealab-MRI-Tracking/refs/heads/main/_images/mri_dashboard.png?token=GHSAT0AAAAAACO2KMSZAUBYMOPSGMNH6Z62Z5T4MPQ
+.. Figure:: https://raw.githubusercontent.com/scott-huberty/Sealab-MRI-Tracking/refs/heads/main/_images/mri_dashboard.png
     :target: http://sealab-mri-tracking-ece9c5a8c812.herokuapp.com/
     :align: left
     :width: 50%
