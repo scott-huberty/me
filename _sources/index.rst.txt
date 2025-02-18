@@ -6,7 +6,7 @@ Scott Huberty
 
 .. rst-class:: lead
 
-    ``for domain in {data,computer,neuro}; do $domain science; done``
+    ``for domain in {data,computer,cognitive}; do $domain science; done``
    
 .. container:: buttons
 
