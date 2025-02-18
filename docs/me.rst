@@ -13,9 +13,9 @@ most widely-used tools in data science today.
 This is no coincidence. Neuroscience demands mastery across multiple technical domains:
 
 - To process **neuroimaging data**, you need a strong foundation in linear algebra, calculus, and signal processing.
-- To handle **large datasets**, you need to be able to know how to write efficient code and manage memory.
+- To handle **large datasets**, you must know how to write efficient code and manage memory.
 - To **understand your data**, you need to design experiments and employ both classical statistical and modern machine learning techniques.
-- To **communicate your findings**, you need to convey the compelling narrative in your data, for audiences ranging from technical specialists to practitioners.
+- To **communicate your findings**, you need to convey the narrative in your data, for audiences ranging from technical specialists to practitioners.
 
 .. figure:: https://school.brainhackmtl.org/img/carousel/fig_data_science.png
     :alt: An image of a 3-way ven diagram with the words Neuroscience, Statistical Modeling, and Computer science in each circle.

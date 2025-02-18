@@ -3,9 +3,11 @@
 Portfolio
 =========
 
-
 As an Engineer
-^^^^^^^^^^^^^^
+--------------
+
+Open-Source Community
+^^^^^^^^^^^^^^^^^^^^^
 
 I am an active member of many of the open source communities within the scientific
 Python ecosystem. A few of the projects I have contributed to include:
@@ -42,8 +44,19 @@ Python ecosystem. A few of the projects I have contributed to include:
 
     `Google Summer of Code <https://summerofcode.withgoogle.com/archive/2023/projects/nUP0jGKi/>`_
 
+
+Dashboards
+^^^^^^^^^^
+
+.. Figure:: https://raw.githubusercontent.com/scott-huberty/Sealab-MRI-Tracking/refs/heads/main/_images/mri_dashboard.png?token=GHSAT0AAAAAACO2KMSZAUBYMOPSGMNH6Z62Z5T4MPQ
+    :target: http://sealab-mri-tracking-ece9c5a8c812.herokuapp.com/
+    :align: left
+    :width: 50%
+    :alt: A screenshot of a dashboard to track data acquisition and processing progress that I made for my lab's MRI studies.
+
+
 As a Scientist
-^^^^^^^^^^^^^^
+--------------
 
 I have authored or co-authored 16 peer-reviewed publications that have been cited
 hundreds of times. My work has been featured in journals such as *NeuroImage* 
