@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:35.874** total execution time for 4 files **from all galleries**:
+**03:26.013** total execution time for 5 files **from all galleries**:
 
 .. container::
 
@@ -33,14 +33,17 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_deep_learning_plot_arfp_wine.py` (``../examples/deep_learning/plot_arfp_wine.py``)
-     - 02:36.510
+     - 02:20.310
      - 0.0
    * - :ref:`sphx_glr_auto_examples_blogs_plot_emg_pose.py` (``../examples/blogs/plot_emg_pose.py``)
-     - 00:31.177
+     - 00:31.031
      - 0.0
    * - :ref:`sphx_glr_auto_examples_blogs_plot_most_wanted.py` (``../examples/blogs/plot_most_wanted.py``)
-     - 00:27.141
+     - 00:26.177
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_deep_learning_plot_arfp_mnist.py` (``../examples/deep_learning/plot_arfp_mnist.py``)
+     - 00:07.483
      - 0.0
    * - :ref:`sphx_glr_auto_examples_deep_learning_plot_accuracy_precision_recall.py` (``../examples/deep_learning/plot_accuracy_precision_recall.py``)
-     - 00:01.046
+     - 00:01.011
      - 0.0

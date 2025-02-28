@@ -6,7 +6,7 @@
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=5d6d21aa" />
+    <link rel="stylesheet" type="text/css" href="../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
@@ -81,6 +81,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l2"><a class="reference internal" href="deep_learning/index.html">Deep Learning</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="deep_learning/plot_accuracy_precision_recall.html">Accuracy, precision, and recall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deep_learning/plot_arfp_mnist.html">Compute Accuracy, Precision, and Recall for a multi-class classification problem</a></li>
 <li class="toctree-l3"><a class="reference internal" href="deep_learning/plot_arfp_wine.html">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</a></li>
 </ul>
 </li>
@@ -156,6 +157,9 @@ neural networks, using the PyTorch framework.</p>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Accuracy --------"><img alt="" src="../_images/sphx_glr_plot_accuracy_precision_recall_thumb.png" />
 <p><a class="reference internal" href="deep_learning/plot_accuracy_precision_recall.html#sphx-glr-auto-examples-deep-learning-plot-accuracy-precision-recall-py"><span class="std std-ref">Accuracy, precision, and recall</span></a></p>
   <div class="sphx-glr-thumbnail-title">Accuracy, precision, and recall</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The MNIST dataset has 10 categories. How do we adopt our classification performance metrics to handle multi-class classification problems?"><img alt="" src="../_images/sphx_glr_plot_arfp_mnist_thumb.png" />
+<p><a class="reference internal" href="deep_learning/plot_arfp_mnist.html#sphx-glr-auto-examples-deep-learning-plot-arfp-mnist-py"><span class="std std-ref">Compute Accuracy, Precision, and Recall for a multi-class classification problem</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Compute Accuracy, Precision, and Recall for a multi-class classification problem</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="We&#x27;ll use Scikit Learn to compute these metrics for us."><img alt="" src="../_images/sphx_glr_plot_arfp_wine_thumb.png" />
 <p><a class="reference internal" href="deep_learning/plot_arfp_wine.html#sphx-glr-auto-examples-deep-learning-plot-arfp-wine-py"><span class="std std-ref">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</span></a></p>
   <div class="sphx-glr-thumbnail-title">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</div>
@@ -224,6 +228,6 @@ neural networks, using the PyTorch framework.</p>
       <script src="../_static/thebelab-helper.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-      <script src="../_static/shibuya.js?v=55e26b35"></script>
+      <script src="../_static/shibuya.js?v=e2230717"></script>
       <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></body>
 </html>

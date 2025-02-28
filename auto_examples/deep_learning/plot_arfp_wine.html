@@ -2,11 +2,11 @@
 <html lang="en" data-accent-color="tomato" data-content_root="../../">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Compute Accuracy, Precision, Recall, and F1 on the Wine dataset - Scott Huberty documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="prev" title="Accuracy, precision, and recall" href="plot_accuracy_precision_recall.html" /><script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Compute Accuracy, Precision, Recall, and F1 on the Wine dataset - Scott Huberty documentation</title><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="prev" title="Compute Accuracy, Precision, and Recall for a multi-class classification problem" href="plot_arfp_mnist.html" /><script>
     function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
     setColorMode(localStorage._theme||"auto");
   </script><link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=397bb51e" />
-    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=5d6d21aa" />
+    <link rel="stylesheet" type="text/css" href="../../_static/shibuya.css?v=3b41e830" />
     <link rel="stylesheet" type="text/css" href="../../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
@@ -81,6 +81,7 @@ data-aria-dark="Switch to auto color mode">
 </li>
 <li class="toctree-l2 current"><a class="reference internal" href="index.html">Deep Learning</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="plot_accuracy_precision_recall.html">Accuracy, precision, and recall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="plot_arfp_mnist.html">Compute Accuracy, Precision, and Recall for a multi-class classification problem</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Compute Accuracy, Precision, Recall, and F1 on the Wine dataset</a></li>
 </ul>
 </li>
@@ -351,13 +352,13 @@ on the wine characteristics.</p>
 </span></pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span><span data-line="1">Accuracy (train): 0.83
-</span><span data-line="2">Accuracy (test): 0.79
+</span><span data-line="2">Accuracy (test): 0.78
 </span><span data-line="3">Precision (train): 0.85
-</span><span data-line="4">Precision (test): 0.86
-</span><span data-line="5">Recall (train): 0.82
-</span><span data-line="6">Recall (test): 0.72
-</span><span data-line="7">F1-score (train): 0.83
-</span><span data-line="8">F1-score (test): 0.78
+</span><span data-line="4">Precision (test): 0.78
+</span><span data-line="5">Recall (train): 0.83
+</span><span data-line="6">Recall (test): 0.76
+</span><span data-line="7">F1-score (train): 0.84
+</span><span data-line="8">F1-score (test): 0.77
 </span></pre></div>
 </div>
 </section>
@@ -422,7 +423,7 @@ on the wine characteristics.</p>
 </span><span data-line="41"><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </span></pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_arfp_wine_002.png" srcset="../../_images/sphx_glr_plot_arfp_wine_002.png" alt="TRAIN confusion matrix, TEST confusion matrix" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 36.510 seconds)</p>
+<img src="../../_images/sphx_glr_plot_arfp_wine_002.png" srcset="../../_images/sphx_glr_plot_arfp_wine_002.png" alt="TRAIN confusion matrix, TEST confusion matrix" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (2 minutes 20.310 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-deep-learning-plot-arfp-wine-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/da271f440f88917f72f3a856804ae005/plot_arfp_wine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_arfp_wine.ipynb</span></code></a></p>
@@ -444,10 +445,10 @@ on the wine characteristics.</p>
   </svg>
   <span>Back to top</span>
 </button><div class="navigation flex print:hidden"><div class="navigation-prev">
-    <a href="plot_accuracy_precision_recall.html">
+    <a href="plot_arfp_mnist.html">
       <i class="i-lucide chevron-left"></i>
       <div class="page-info">
-        <span>Previous</span><div class="title">Accuracy, precision, and recall</div></div>
+        <span>Previous</span><div class="title">Compute Accuracy, Precision, and Recall for a multi-class classification problem</div></div>
     </a>
   </div></div></div>
     </div>
@@ -482,5 +483,5 @@ on the wine characteristics.</p>
       <script src="../../_static/thebelab-helper.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-      <script src="../../_static/shibuya.js?v=55e26b35"></script></body>
+      <script src="../../_static/shibuya.js?v=e2230717"></script></body>
 </html>

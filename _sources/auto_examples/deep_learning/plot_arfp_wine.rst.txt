@@ -318,13 +318,13 @@ Compute the accuracy, precision, recall, and F1 score on the train and test sets
  .. code-block:: none
 
     Accuracy (train): 0.83
-    Accuracy (test): 0.79
+    Accuracy (test): 0.78
     Precision (train): 0.85
-    Precision (test): 0.86
-    Recall (train): 0.82
-    Recall (test): 0.72
-    F1-score (train): 0.83
-    F1-score (test): 0.78
+    Precision (test): 0.78
+    Recall (train): 0.83
+    Recall (test): 0.76
+    F1-score (train): 0.84
+    F1-score (test): 0.77
 
 
 
@@ -431,7 +431,7 @@ Confusion matrices
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (2 minutes 36.510 seconds)
+   **Total running time of the script:** (2 minutes 20.310 seconds)
 
 
 .. _sphx_glr_download_auto_examples_deep_learning_plot_arfp_wine.py:
